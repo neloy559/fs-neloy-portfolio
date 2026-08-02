@@ -122,7 +122,7 @@
       margin-top: 10px;
     }
 
-    .auth-input {
+    .auth-input, .auth-select {
       width: 100%;
       padding: 14px 18px;
       background: rgba(0, 0, 0, 0.5);
@@ -135,7 +135,12 @@
       transition: border-color 0.2s;
     }
 
-    .auth-input:focus {
+    .auth-select option {
+      background: #141414;
+      color: var(--text);
+    }
+
+    .auth-input:focus, .auth-select:focus {
       border-color: var(--accent);
     }
 
@@ -505,7 +510,7 @@
 
     .import-card {
       width: 100%;
-      max-width: 520px;
+      max-width: 540px;
       background: var(--surface-raised);
       border: 1px solid var(--border);
       border-radius: 20px;
@@ -536,27 +541,37 @@
     </div>
   </div>
 
-  <!-- Import Project Modal -->
+  <!-- Import Project Modal with Live GitHub Picker -->
   <div class="import-modal" id="importModal">
     <div class="import-card">
       <div class="section-title">
-        <span>➕</span> IMPORT NEW GITHUB PROJECT
+        <span>➕</span> IMPORT FROM GITHUB (@neloy559)
       </div>
-      <p class="auth-desc">Type your GitHub repository name or paste project URL to feature it on your portfolio.</p>
+      <p class="auth-desc">Select any repository from your live GitHub account or enter custom project details.</p>
 
       <form id="importForm" class="auth-form">
         <div>
-          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">REPO NAME OR URL *</label>
+          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">SELECT YOUR GITHUB REPOSITORY *</label>
+          <select id="githubRepoSelect" class="auth-select">
+            <option value="">-- Fetching your live GitHub repos... --</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">REPO NAME OR TITLE *</label>
           <input type="text" id="importRepoInput" class="auth-input" placeholder="e.g. Mail-Nova---An-Email-Marketing-Agency" required />
         </div>
+
         <div>
           <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">BADGE / CATEGORY</label>
           <input type="text" id="importBadgeInput" class="auth-input" placeholder="e.g. SAAS PLATFORM / AI TOOL" value="FEATURED REPO" />
         </div>
+
         <div>
           <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">LIVE WEBSITE URL (OPTIONAL)</label>
           <input type="url" id="importLiveUrlInput" class="auth-input" placeholder="https://my-app.vercel.app" />
         </div>
+
         <div style="display: flex; gap: 12px; margin-top: 10px;">
           <button type="submit" class="auth-btn" style="flex: 1;">SAVE &amp; IMPORT →</button>
           <button type="button" id="closeImportBtn" class="auth-btn" style="background: #333; color: #fff;">CANCEL</button>
@@ -726,10 +741,13 @@
       const MASTER_PASS = "neloy@portfolio.com";
       const SESSION_KEY = "fs_neloy_admin_authenticated";
 
+      let githubReposCache = [];
+
       function unlockDashboard() {
         if (authGate) authGate.style.display = 'none';
         if (adminShell) adminShell.style.display = 'flex';
         sessionStorage.setItem(SESSION_KEY, "true");
+        fetchLiveGithubRepos();
       }
 
       function lockDashboard() {
@@ -761,6 +779,43 @@
       });
 
       lockBtn?.addEventListener('click', lockDashboard);
+
+      // Fetch Live GitHub Repositories for Picker Dropdown
+      async function fetchLiveGithubRepos() {
+        const repoSelect = document.getElementById('githubRepoSelect');
+        try {
+          const res = await fetch('https://api.github.com/users/neloy559/repos?sort=updated&per_page=100');
+          if (res.ok) {
+            githubReposCache = await res.json();
+            if (repoSelect && githubReposCache.length > 0) {
+              repoSelect.innerHTML = `<option value="">-- Pick a repository from @neloy559 --</option>` +
+                githubReposCache.map(r => `<option value="${r.name}">${r.name} (${r.language || 'Code'} • Updated ${new Date(r.updated_at).toLocaleDateString('en-US', {month:'short', day:'numeric'})})</option>`).join('');
+            }
+          }
+        } catch (err) {
+          console.warn('GitHub repo picker fetch fallback:', err);
+        }
+      }
+
+      // Auto-fill form when repo is selected from dropdown
+      const githubRepoSelect = document.getElementById('githubRepoSelect');
+      githubRepoSelect?.addEventListener('change', (e) => {
+        const selectedName = e.target.value;
+        if (!selectedName) return;
+
+        const repoObj = githubReposCache.find(r => r.name === selectedName);
+        const repoInput = document.getElementById('importRepoInput');
+        const badgeInput = document.getElementById('importBadgeInput');
+        const liveUrlInput = document.getElementById('importLiveUrlInput');
+
+        if (repoInput) repoInput.value = repoObj ? repoObj.name : selectedName;
+        if (badgeInput && repoObj) {
+          badgeInput.value = (repoObj.language || 'FEATURED REPO').toUpperCase();
+        }
+        if (liveUrlInput && repoObj) {
+          liveUrlInput.value = repoObj.homepage || '';
+        }
+      });
 
       // Import Project Modal Logic
       const importModal = document.getElementById('importModal');
