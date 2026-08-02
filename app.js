@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 4. Live GitHub API Sync with VISIT WEBSITE CTA
+  // 4. Live GitHub API Sync (Only render VISIT WEBSITE CTA if homepage/domain is set)
   async function fetchGitHubData() {
     try {
       // Fetch User Info
@@ -113,7 +113,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const grid = document.getElementById('liveActivityGrid');
         if (grid && repos.length > 0) {
           grid.innerHTML = repos.map(repo => {
-            const liveUrl = repo.homepage || `https://github.com/neloy559/${repo.name}`;
+            // Check if homepage is set to a real deployment URL (vercel.app, github.io, custom domain)
+            const hasLiveDomain = repo.homepage && (repo.homepage.startsWith('http://') || repo.homepage.startsWith('https://')) && repo.homepage.length > 10;
+            const visitBtnHtml = hasLiveDomain 
+              ? `<a href="${repo.homepage}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">VISIT WEBSITE ↗</a>` 
+              : '';
+
             return `
               <article class="feature">
                 <div class="feature-head">
@@ -134,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="feature-actions">
                   <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">VIEW REPOSITORY <span class="arrow"></span></a>
-                  <a href="${liveUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">VISIT WEBSITE ↗</a>
+                  ${visitBtnHtml}
                 </div>
               </article>
             `;
