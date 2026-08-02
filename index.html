@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>FS Neloy | Full-Stack AI Engineer Portfolio</title>
+  <meta name="description" content="Portfolio of FS Neloy, an AI & Full-Stack Engineer building production-ready applications, intelligent agents, and web tools." />
+  <meta name="theme-color" content="#0c0c0c" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,400&display=swap" rel="stylesheet" />
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="index.css" />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "FS Neloy",
+    "jobTitle": "Full-Stack AI Engineer",
+    "url": "https://github.com/neloy559",
+    "email": "seyasbro@gmail.com",
+    "sameAs": [
+      "https://github.com/neloy559"
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <!-- SVG Noise Grain Texture Overlay -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Scroll Progress Hairline -->
+  <div class="scroll-progress" aria-hidden="true">
+    <i id="scrollBar"></i>
+  </div>
+
+  <!-- Custom Starburst Cursor -->
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+  <!-- Header Navigation Component -->
+  <header class="nav" role="banner">
+    <a href="#hero" class="nav-mark" aria-label="FS Neloy Portfolio Home">
+      FS NELOY <span class="nav-kbd">AI &amp; FULL-STACK ENGINEER</span>
+    </a>
+    <nav class="nav-links" aria-label="Main Navigation">
+      <a href="#about">About</a>
+      <a href="#work">Work</a>
+      <a href="#projects">Projects</a>
+      <a href="#stack">Stack</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="nav-right">
+      <button type="button" class="btn btn-ghost cmd-btn" id="cmdToggleBtn" aria-label="Open Command Search Menu">
+        <span>SEARCH</span> <kbd class="nav-kbd">⌘K</kbd>
+      </button>
+      <a href="#contact" class="nav-cta">GET IN TOUCH <span class="arrow" aria-hidden="true"></span></a>
+    </div>
+  </header>
+
+  <!-- Command Palette / Search Modal -->
+  <div class="cmd-modal" id="cmdModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Command Search Menu">
+    <div class="cmd-overlay" id="cmdOverlay"></div>
+    <div class="cmd-content">
+      <div class="cmd-header">
+        <label for="cmdInput" class="sr-only">Search portfolio projects and tech stack</label>
+        <input type="text" id="cmdInput" class="cmd-input" placeholder="Search FS Neloy's projects, skills, or stack..." autocomplete="off" />
+        <button type="button" id="cmdCloseBtn" class="cmd-close" aria-label="Close command palette">✕</button>
+      </div>
+      <div class="cmd-results" id="cmdResults">
+        <div class="cmd-item" data-url="#work">
+          <span class="cmd-badge">PROJECT</span>
+          <span class="cmd-title">Full-Stack Web Applications &amp; AI Tools</span>
+        </div>
+        <div class="cmd-item" data-url="#stack">
+          <span class="cmd-badge">STACK</span>
+          <span class="cmd-title">JavaScript, Python, React, Modern CSS &amp; LLM Systems</span>
+        </div>
+        <div class="cmd-item" data-url="#contact">
+          <span class="cmd-badge">CONTACT</span>
+          <span class="cmd-title">Email: seyasbro@gmail.com</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <main id="hero" class="hero-wrap">
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="hero-text">
+        <div class="hero-eyebrow">
+          <span class="dot" aria-hidden="true"></span>
+          <b>OPEN FOR NEW PROJECTS &amp; ROLES</b>
+          <span class="sep" aria-hidden="true">/</span>
+          <span>FULL-STACK &amp; AI</span>
+        </div>
+        <h1 id="hero-heading" class="hero-title">
+          <span class="ht-first">FS</span>
+          <span class="ht-last">NELOY</span>
+        </h1>
+        <p class="hero-tagline">
+          Full-Stack AI Engineer crafting modern web experiences, intelligent agent workflows, and clean tokenized design systems.
+        </p>
+        <p class="hero-paragraph">
+          Designing production-ready web applications, high-performance APIs, and custom software systems with a relentless focus on aesthetics and user experience.
+        </p>
+        <div class="hero-actions">
+          <a href="#work" class="btn btn-primary">EXPLORE PROJECTS <span class="arrow" aria-hidden="true"></span></a>
+          <a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">GITHUB (@neloy559)</a>
+        </div>
+      </div>
+
+      <div class="hero-portrait-wrap">
+        <div class="hero-portrait in">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80" alt="Portrait photo of FS Neloy" />
+          <div class="duotone" aria-hidden="true"></div>
+          <div class="overlay-ink" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Proof Metrics Bar -->
+    <div class="proof" aria-label="Key Highlights">
+      <div class="proof-row">
+        <div class="proof-num">100<span class="u">%</span></div>
+        <div class="proof-lbl">Tokenized Responsive Design Systems</div>
+      </div>
+      <div class="proof-row">
+        <div class="proof-num">FS<span class="u">.</span></div>
+        <div class="proof-lbl">Full-Stack &amp; Agentic AI Architecture</div>
+      </div>
+      <div class="proof-row">
+        <div class="proof-num">GH<span class="u">/</span></div>
+        <div class="proof-lbl">Active GitHub Profile (@neloy559)</div>
+      </div>
+      <div class="proof-row">
+        <div class="proof-num">AA<span class="u">+</span></div>
+        <div class="proof-lbl">WCAG 2.2 Accessibility Compliance</div>
+      </div>
+      <div class="proof-row">
+        <div class="proof-num">24<span class="u">/7</span></div>
+        <div class="proof-lbl">High-Performance Web Applications</div>
+      </div>
+    </div>
+
+    <!-- Live Status / Now Card -->
+    <div class="now-wrap">
+      <div class="now">
+        <div class="now-lbl">
+          <span class="dot" aria-hidden="true"></span>
+          CURRENTLY <b>DEVELOPING</b>
+        </div>
+        <div class="now-body">
+          Building AI-assisted web applications &amp; <span class="em">custom design system practice suites</span>.
+        </div>
+        <div class="now-clock">
+          <span>LOCAL TIME</span>
+          <b id="liveClock">14:20:00 PM</b>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- About Section -->
+  <section id="about" class="section">
+    <div class="sh">
+      <h2>ABOUT <span class="it">FS NELOY</span></h2>
+      <div class="sh-side">
+        <span class="eyebrow">CREATIVE ENGINEER</span>
+        <span>Combining modern UI aesthetics with powerful backend and AI logic.</span>
+      </div>
+    </div>
+
+    <div class="about-wrap">
+      <dl class="about-meta">
+        <div>
+          <dt>GITHUB PROFILE</dt>
+          <dd><a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer" class="accent">@neloy559</a></dd>
+        </div>
+        <div>
+          <dt>CONTACT EMAIL</dt>
+          <dd>seyasbro@gmail.com</dd>
+        </div>
+        <div>
+          <dt>SPECIALIZATION</dt>
+          <dd>Full-Stack Engineering, AI Systems, UI Design</dd>
+        </div>
+      </dl>
+
+      <div class="about-prose">
+        <p>
+          I am a <strong>Full-Stack AI Engineer</strong> passionate about building sleek, high-performing web applications and intelligent software solutions.
+        </p>
+        <p>
+          My focus is on creating tokenized, accessible design systems and deploying robust codebases that elevate user experiences.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Work Section -->
+  <section id="work" class="section">
+    <div class="sh">
+      <h2>FEATURED <span class="it">WORKS</span></h2>
+      <div class="sh-side">
+        <span class="eyebrow">PORTFOLIO PROJECTS</span>
+        <span>Highlights of development practice and production applications.</span>
+      </div>
+    </div>
+
+    <div class="best-grid">
+      <!-- Project 1 -->
+      <article class="feature">
+        <div class="feature-head">
+          <div class="feature-badge">
+            <span class="dot" aria-hidden="true"></span>
+            DESIGN SYSTEM &amp; WEB APP
+          </div>
+          <span class="feature-year">2026</span>
+        </div>
+        <div class="feature-headline">
+          <h3 class="feature-title">Tokenized Portfolio Suite</h3>
+          <p class="feature-pitch">High-performance dark theme portfolio built with DESIGN.md &amp; SKILL.md specs.</p>
+        </div>
+        <ul class="feature-points">
+          <li class="feature-point">
+            <span class="pt-mark" aria-hidden="true"></span>
+            <span>Custom Starburst cursor, real-time clock, keyboard shortcut menu, and WCAG AA standards.</span>
+          </li>
+        </ul>
+        <div class="feature-stack">
+          <span>JavaScript</span>
+          <span>HTML5</span>
+          <span>CSS Tokens</span>
+          <span>GitHub Pages</span>
+        </div>
+        <div class="feature-actions">
+          <a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">VIEW GITHUB <span class="arrow" aria-hidden="true"></span></a>
+        </div>
+      </article>
+
+      <!-- Project 2 -->
+      <article class="feature">
+        <div class="feature-head">
+          <div class="feature-badge">
+            <span class="dot" aria-hidden="true"></span>
+            FULL-STACK &amp; AI
+          </div>
+          <span class="feature-year">2026</span>
+        </div>
+        <div class="feature-headline">
+          <h3 class="feature-title">AI Practice Innovations</h3>
+          <p class="feature-pitch">Building automated development frameworks and intelligent agent workflows.</p>
+        </div>
+        <ul class="feature-points">
+          <li class="feature-point">
+            <span class="pt-mark" aria-hidden="true"></span>
+            <span>Integrating generative AI and custom web interfaces for fast delivery and clean execution.</span>
+          </li>
+        </ul>
+        <div class="feature-stack">
+          <span>Python</span>
+          <span>JavaScript</span>
+          <span>REST APIs</span>
+          <span>AI Agents</span>
+        </div>
+        <div class="feature-actions">
+          <a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">EXPLORE REPOS <span class="arrow" aria-hidden="true"></span></a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Technical Stack Section -->
+  <section id="stack" class="section">
+    <div class="sh">
+      <h2>TECHNICAL <span class="it">STACK</span></h2>
+      <div class="sh-side">
+        <span class="eyebrow">CORE SKILLS</span>
+        <span>Technologies, languages, and frameworks.</span>
+      </div>
+    </div>
+
+    <div class="stack-grid">
+      <div class="stack-cat">
+        <h3>FRONTEND &amp; UI</h3>
+        <ul class="stack-list">
+          <li><a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer">HTML5 &amp; Semantic Markup</a></li>
+          <li><a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer">Modern CSS &amp; Design Tokens</a></li>
+          <li><a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer">JavaScript / TypeScript</a></li>
+        </ul>
+      </div>
+
+      <div class="stack-cat">
+        <h3>BACKEND &amp; AI</h3>
+        <ul class="stack-list">
+          <li><a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer">Python &amp; FastAPI</a></li>
+          <li><a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer">LLM APIs &amp; AI Agent Orchestration</a></li>
+          <li><a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer">RESTful APIs &amp; Web Services</a></li>
+        </ul>
+      </div>
+
+      <div class="stack-cat">
+        <h3>DEV TOOLS &amp; WORKFLOW</h3>
+        <ul class="stack-list">
+          <li><a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer">Git &amp; GitHub Actions</a></li>
+          <li><a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer">VS Code &amp; Agentic Tools</a></li>
+          <li><a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer">GitHub Pages Deployment</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Footer -->
+  <footer id="contact" class="section footer" role="contentinfo">
+    <div class="footer-wrap">
+      <div class="footer-left">
+        <span class="eyebrow">LET'S CONNECT</span>
+        <h2>BUILD SOMETHING <br /><span class="it">GREAT TOGETHER</span></h2>
+        <p>Open for full-stack engineering roles, freelance opportunities, and collaborative AI projects.</p>
+      </div>
+
+      <div class="footer-links">
+        <a href="mailto:seyasbro@gmail.com" class="footer-link">seyasbro@gmail.com</a>
+        <div class="social-row">
+          <a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer">GitHub (@neloy559)</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 FS NELOY — ALL RIGHTS RESERVED</span>
+      <span>DESIGNED &amp; DEVELOPED BY FS NELOY</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
