@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // 0. Dynamic Developer Identity & Bio Sync Bridge
+  // 0A. Dynamic Developer Identity & Bio Sync Bridge
   const PROFILE_KEY = "fs_neloy_profile_data";
   function applyProfileData() {
     const savedProf = localStorage.getItem(PROFILE_KEY);
@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const aboutStack = document.getElementById('aboutStack');
       const aboutProseP1 = document.getElementById('aboutProseP1');
       const aboutProseP2 = document.getElementById('aboutProseP2');
+      const footerEmailLink = document.getElementById('footerEmailLink');
 
       if (heroAvailabilityText && p.status) heroAvailabilityText.textContent = p.status.toUpperCase();
       if (heroTagline && p.tagline) heroTagline.textContent = p.tagline;
@@ -25,6 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (aboutHeadingName && p.name) aboutHeadingName.textContent = p.name.toUpperCase();
       if (aboutEyebrow && p.title) aboutEyebrow.textContent = p.title.toUpperCase();
       if (aboutEmail && p.email) aboutEmail.textContent = p.email;
+      if (footerEmailLink && p.email) {
+        footerEmailLink.textContent = p.email;
+        footerEmailLink.href = `mailto:${p.email}`;
+      }
       if (aboutGithub && p.github) {
         aboutGithub.textContent = p.github.startsWith('@') ? p.github : `@${p.github}`;
         aboutGithub.href = `https://github.com/${p.github.replace('@', '')}`;
@@ -37,6 +42,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   applyProfileData();
+
+  // 0B. Dynamic Social Media & Web Handles Sync Bridge
+  const SOCIALS_KEY = "fs_neloy_socials_data";
+  function applySocialsData() {
+    const savedSoc = localStorage.getItem(SOCIALS_KEY);
+    if (!savedSoc) return;
+
+    try {
+      const s = JSON.parse(savedSoc);
+      const footerSocials = document.getElementById('footerSocials');
+      if (!footerSocials) return;
+
+      const links = [];
+      if (s.github) links.push(`<a href="${s.github}" target="_blank" rel="noopener noreferrer">GitHub</a>`);
+      if (s.linkedin) links.push(`<a href="${s.linkedin}" target="_blank" rel="noopener noreferrer">LinkedIn</a>`);
+      if (s.twitter) links.push(`<a href="${s.twitter}" target="_blank" rel="noopener noreferrer">Twitter / X</a>`);
+      if (s.facebook) links.push(`<a href="${s.facebook}" target="_blank" rel="noopener noreferrer">Facebook</a>`);
+      if (s.telegram) links.push(`<a href="${s.telegram}" target="_blank" rel="noopener noreferrer">Telegram</a>`);
+      if (s.discord) links.push(`<span>Discord: ${s.discord}</span>`);
+      if (s.blog) links.push(`<a href="${s.blog}" target="_blank" rel="noopener noreferrer">Blog</a>`);
+      if (s.youtube) links.push(`<a href="${s.youtube}" target="_blank" rel="noopener noreferrer">YouTube</a>`);
+
+      links.push(`<a href="/dashboard" target="_blank" style="color: var(--color-surface-muted);">Admin OS ⚡</a>`);
+
+      footerSocials.innerHTML = links.join('');
+    } catch (e) {
+      console.warn('Socials sync fallback:', e);
+    }
+  }
+  applySocialsData();
 
   // 1. Live Digital Clock
   const clockEl = document.getElementById('liveClock');

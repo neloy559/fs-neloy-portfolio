@@ -659,7 +659,8 @@
       <div class="admin-tabs">
         <button class="tab-btn active" data-tab="tabProjects">⚡ FEATURED PROJECTS CONTROLLER</button>
         <button class="tab-btn" data-tab="tabRecent">📡 RECENT ACTIVITY &amp; FEED HIDER</button>
-        <button class="tab-btn" data-tab="tabProfile">👤 DEVELOPER IDENTITY &amp; BIO EDITOR</button>
+        <button class="tab-btn" data-tab="tabProfile">👤 IDENTITY &amp; BIO EDITOR</button>
+        <button class="tab-btn" data-tab="tabSocials">🌐 SOCIAL MEDIA &amp; WEB HANDLES</button>
       </div>
 
       <!-- Tab 1: Featured Projects Manager -->
@@ -759,6 +760,64 @@
           </div>
         </form>
       </div>
+
+      <!-- Tab 4: Social Media & Web Presence Controller -->
+      <div class="tab-content" id="tabSocials">
+        <div class="section-title-row">
+          <div class="section-title">
+            <span>//</span> SOCIAL MEDIA &amp; GLOBAL WEB HANDLES
+          </div>
+          <span style="font-family: var(--font-mono); font-size: 12px; color: var(--accent);">Connect your social links all over the web</span>
+        </div>
+
+        <form id="socialsForm" class="pm-card" style="gap: 24px;">
+          <div class="identity-form-grid">
+            <div class="form-group">
+              <label class="form-label">GITHUB PROFILE URL</label>
+              <input type="url" id="socGithubInput" class="auth-input" value="https://github.com/neloy559" placeholder="https://github.com/neloy559" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">LINKEDIN PROFILE URL</label>
+              <input type="url" id="socLinkedinInput" class="auth-input" placeholder="https://linkedin.com/in/yourname" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">TWITTER / X PROFILE URL</label>
+              <input type="url" id="socTwitterInput" class="auth-input" placeholder="https://x.com/yourhandle" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">FACEBOOK PROFILE / PAGE URL</label>
+              <input type="url" id="socFacebookInput" class="auth-input" placeholder="https://facebook.com/yourname" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">TELEGRAM / WHATSAPP LINK</label>
+              <input type="url" id="socTelegramInput" class="auth-input" placeholder="https://t.me/yourusername" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">DISCORD USERNAME / SERVER LINK</label>
+              <input type="text" id="socDiscordInput" class="auth-input" placeholder="neloy#1234 or https://discord.gg/..." />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">DEV.TO / MEDIUM / BLOG URL</label>
+              <input type="url" id="socBlogInput" class="auth-input" placeholder="https://dev.to/yourusername" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">YOUTUBE CHANNEL URL</label>
+              <input type="url" id="socYoutubeInput" class="auth-input" placeholder="https://youtube.com/@yourchannel" />
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 16px; margin-top: 10px;">
+            <button type="submit" class="auth-btn" style="flex: 1; font-size: 13px;">💾 SAVE SOCIAL MEDIA &amp; WEB HANDLES →</button>
+          </div>
+        </form>
+      </div>
     </main>
   </div>
 
@@ -777,6 +836,7 @@
       const STORAGE_KEY = "fs_neloy_curated_projects";
       const HIDDEN_RECENT_KEY = "fs_neloy_hidden_recent_repos";
       const PROFILE_KEY = "fs_neloy_profile_data";
+      const SOCIALS_KEY = "fs_neloy_socials_data";
 
       const DEFAULT_PROJECTS = [
         { name: 'LeadScraper Pro', badge: 'SAAS PLATFORM', pitch: 'No-AI BYODB Lead Scraping & Outreach SaaS Platform designed for high-conversion lead generation.', homepage: '', showVisitBtn: false },
@@ -794,6 +854,7 @@
         fetchLiveGithubRepos();
         renderAdminProjects();
         loadProfileForm();
+        loadSocialsForm();
       }
 
       function lockDashboard() {
@@ -938,7 +999,6 @@
       }
 
       // Profile & Bio Editor Logic
-      const identityForm = document.getElementById('identityForm');
       function loadProfileForm() {
         const savedProf = localStorage.getItem(PROFILE_KEY);
         if (!savedProf) return;
@@ -964,6 +1024,7 @@
         }
       }
 
+      const identityForm = document.getElementById('identityForm');
       identityForm?.addEventListener('submit', (e) => {
         e.preventDefault();
         const profileData = {
@@ -985,6 +1046,45 @@
 
         triggerSaveNotice();
         alert('✓ Developer Identity & Bio updated! Your portfolio has auto-updated live.');
+      });
+
+      // Social Media Handles Logic
+      function loadSocialsForm() {
+        const savedSoc = localStorage.getItem(SOCIALS_KEY);
+        if (!savedSoc) return;
+
+        try {
+          const s = JSON.parse(savedSoc);
+          if (s.github) document.getElementById('socGithubInput').value = s.github;
+          if (s.linkedin) document.getElementById('socLinkedinInput').value = s.linkedin;
+          if (s.twitter) document.getElementById('socTwitterInput').value = s.twitter;
+          if (s.facebook) document.getElementById('socFacebookInput').value = s.facebook;
+          if (s.telegram) document.getElementById('socTelegramInput').value = s.telegram;
+          if (s.discord) document.getElementById('socDiscordInput').value = s.discord;
+          if (s.blog) document.getElementById('socBlogInput').value = s.blog;
+          if (s.youtube) document.getElementById('socYoutubeInput').value = s.youtube;
+        } catch (e) {
+          console.warn('Socials parse fallback:', e);
+        }
+      }
+
+      const socialsForm = document.getElementById('socialsForm');
+      socialsForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const socialsData = {
+          github: document.getElementById('socGithubInput')?.value.trim(),
+          linkedin: document.getElementById('socLinkedinInput')?.value.trim(),
+          twitter: document.getElementById('socTwitterInput')?.value.trim(),
+          facebook: document.getElementById('socFacebookInput')?.value.trim(),
+          telegram: document.getElementById('socTelegramInput')?.value.trim(),
+          discord: document.getElementById('socDiscordInput')?.value.trim(),
+          blog: document.getElementById('socBlogInput')?.value.trim(),
+          youtube: document.getElementById('socYoutubeInput')?.value.trim()
+        };
+
+        localStorage.setItem(SOCIALS_KEY, JSON.stringify(socialsData));
+        triggerSaveNotice();
+        alert('✓ Social Media & Web Handles saved! Your portfolio has auto-updated live.');
       });
 
       // Fetch Live GitHub Repositories for Picker Dropdown and Recent Activity Feed Hider
