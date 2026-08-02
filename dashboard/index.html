@@ -630,15 +630,16 @@
 
       <!-- Navigation Tabs -->
       <div class="admin-tabs">
-        <button class="tab-btn active" data-tab="tabProjects">⚡ PROJECT CTA &amp; REPO CONTROLLER</button>
-        <button class="tab-btn" data-tab="tabProfile">👤 PROFILE &amp; HERO BIO EDITOR</button>
+        <button class="tab-btn active" data-tab="tabProjects">⚡ FEATURED PROJECTS CONTROLLER</button>
+        <button class="tab-btn" data-tab="tabRecent">📡 RECENT ACTIVITY &amp; FEED HIDER</button>
+        <button class="tab-btn" data-tab="tabProfile">👤 PROFILE &amp; HERO BIO</button>
       </div>
 
-      <!-- Tab 1: Project Manager -->
+      <!-- Tab 1: Featured Projects Manager -->
       <div class="tab-content active" id="tabProjects">
         <div class="section-title-row">
           <div class="section-title">
-            <span>//</span> CURATED PROJECTS &amp; 1-CLICK CONTROLLER
+            <span>//</span> FEATURED PROJECTS &amp; 1-CLICK CONTROLLER
           </div>
           <button type="button" id="openImportBtn" class="btn-import">➕ IMPORT NEW PROJECT</button>
         </div>
@@ -648,7 +649,21 @@
         </div>
       </div>
 
-      <!-- Tab 2: Profile Settings -->
+      <!-- Tab 2: Recent Activity / Feed Hider -->
+      <div class="tab-content" id="tabRecent">
+        <div class="section-title-row">
+          <div class="section-title">
+            <span>//</span> RECENT ACTIVITY FEED CONTROLLER
+          </div>
+          <span style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">Toggle ON/OFF to show or hide repos from your Recent Activity section</span>
+        </div>
+
+        <div class="project-grid" id="adminRecentGrid">
+          <div style="font-family: var(--font-mono); font-size: 13px; color: var(--text-secondary);">Loading your live GitHub repositories feed...</div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Profile Settings -->
       <div class="tab-content" id="tabProfile">
         <div class="section-title">
           <span>//</span> IDENTITY &amp; HERO BIO EDITOR
@@ -678,6 +693,7 @@
       const MASTER_PASS = "neloy@portfolio.com";
       const SESSION_KEY = "fs_neloy_admin_authenticated";
       const STORAGE_KEY = "fs_neloy_curated_projects";
+      const HIDDEN_RECENT_KEY = "fs_neloy_hidden_recent_repos";
 
       const DEFAULT_PROJECTS = [
         { name: 'LeadScraper Pro', badge: 'SAAS PLATFORM', pitch: 'No-AI BYODB Lead Scraping & Outreach SaaS Platform designed for high-conversion lead generation.', homepage: '', showVisitBtn: false },
@@ -751,6 +767,27 @@
 
         localStorage.setItem(STORAGE_KEY, JSON.stringify(projectsList));
         updateRepoCounter();
+        triggerSaveNotice();
+      }
+
+      function saveHiddenRecentState() {
+        const grid = document.getElementById('adminRecentGrid');
+        if (!grid) return;
+
+        const hiddenRepos = [];
+        grid.querySelectorAll('.pm-card').forEach(card => {
+          const repoName = card.getAttribute('data-repo-name');
+          const toggle = card.querySelector('.recent-toggle');
+          if (repoName && toggle && !toggle.checked) {
+            hiddenRepos.push(repoName.toLowerCase());
+          }
+        });
+
+        localStorage.setItem(HIDDEN_RECENT_KEY, JSON.stringify(hiddenRepos));
+        triggerSaveNotice();
+      }
+
+      function triggerSaveNotice() {
         if (saveStatusPill) {
           saveStatusPill.textContent = '✓ Live Auto-Saved!';
           setTimeout(() => saveStatusPill.textContent = '✓ Live Auto-Saved', 2000);
@@ -816,16 +853,54 @@
         statRepoCount.textContent = total;
       }
 
-      // Fetch Live GitHub Repositories for Picker Dropdown
+      // Fetch Live GitHub Repositories for Picker Dropdown and Recent Activity Feed Hider
       async function fetchLiveGithubRepos() {
         const repoSelect = document.getElementById('githubRepoSelect');
+        const recentGrid = document.getElementById('adminRecentGrid');
+
         try {
           const res = await fetch('https://api.github.com/users/neloy559/repos?sort=updated&per_page=100');
           if (res.ok) {
             githubReposCache = await res.json();
+            
+            // A. Populate Repo Select Dropdown
             if (repoSelect && githubReposCache.length > 0) {
               repoSelect.innerHTML = `<option value="">-- Pick a repository from @neloy559 --</option>` +
                 githubReposCache.map(r => `<option value="${r.name}">${r.name} (${r.language || 'Code'} • Updated ${new Date(r.updated_at).toLocaleDateString('en-US', {month:'short', day:'numeric'})})</option>`).join('');
+            }
+
+            // B. Populate Recent Activity Feed Hider Controller
+            const hiddenSaved = localStorage.getItem(HIDDEN_RECENT_KEY);
+            const hiddenSet = new Set(hiddenSaved ? JSON.parse(hiddenSaved) : []);
+
+            if (recentGrid && githubReposCache.length > 0) {
+              recentGrid.innerHTML = githubReposCache.map(repo => {
+                const isVisible = !hiddenSet.has(repo.name.toLowerCase());
+                return `
+                  <div class="pm-card" data-repo-name="${repo.name}">
+                    <div class="pm-header">
+                      <span class="pm-badge">${(repo.language || 'REPO').toUpperCase()}</span>
+                      <span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">⭐ ${repo.stargazers_count || 0}</span>
+                    </div>
+                    <h3 class="pm-title" style="font-size: 16px;">${repo.name}</h3>
+                    <p class="pm-pitch" style="font-size: 12px;">${repo.description || 'Public GitHub repository by @neloy559.'}</p>
+                    <div class="pm-controls">
+                      <div class="toggle-row">
+                        <span>SHOW IN RECENT ACTIVITY</span>
+                        <label class="toggle-switch">
+                          <input type="checkbox" ${isVisible ? 'checked' : ''} class="recent-toggle" />
+                          <span class="slider"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('');
+
+              // Bind Recent Activity Hider Toggles
+              recentGrid.querySelectorAll('.recent-toggle').forEach(toggle => {
+                toggle.onchange = () => saveHiddenRecentState();
+              });
             }
           }
         } catch (err) {

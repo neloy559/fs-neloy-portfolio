@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 4. Featured Projects & Live Activity Sync with Admin OS
+  // 4. Featured Projects & Live Recent Activity Sync with Admin OS Controller
   const DEFAULT_SELECTIVE_REPOS = [
     { name: 'leadscraper-pro', badge: 'SAAS PLATFORM', pitch: 'No-AI BYODB Lead Scraping & Outreach SaaS Platform designed for high-conversion lead generation.', homepage: '', showVisitBtn: false },
     { name: 'rupnogor-project', badge: 'FASHION E-COMMERCE', pitch: 'Premium Bangladeshi fashion e-commerce — sarees, fusion wear, and handcrafted jewelry.', homepage: 'https://rupnogor-project.vercel.app', showVisitBtn: true },
@@ -164,10 +164,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
       }
 
-      // B. Populate RECENT ACTIVITY (#liveActivityGrid) from GitHub Feed
+      // B. Populate RECENT ACTIVITY (#liveActivityGrid) with Admin OS Feed Hider Filter
+      const hiddenSaved = localStorage.getItem('fs_neloy_hidden_recent_repos');
+      const hiddenSet = new Set(hiddenSaved ? JSON.parse(hiddenSaved) : []);
+
+      const visibleRecentRepos = githubRepos.filter(r => !hiddenSet.has(r.name.toLowerCase()));
+
       const recentGrid = document.getElementById('liveActivityGrid');
-      if (recentGrid && githubRepos.length > 0) {
-        recentGrid.innerHTML = githubRepos.slice(0, 6).map(repo => {
+      if (recentGrid && visibleRecentRepos.length > 0) {
+        recentGrid.innerHTML = visibleRecentRepos.slice(0, 6).map(repo => {
           const hasHomepage = repo.homepage && repo.homepage.startsWith('http');
           const visitBtnHtml = hasHomepage
             ? `<a href="${repo.homepage}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">VISIT WEBSITE ↗</a>`
