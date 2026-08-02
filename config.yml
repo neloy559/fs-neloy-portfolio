@@ -2,7 +2,6 @@ backend:
   name: github
   repo: neloy559/fs-neloy-portfolio
   branch: main
-  site_domain: fs-neloy-portfolio.vercel.app
 
 media_folder: "assets/uploads"
 public_folder: "/assets/uploads"
