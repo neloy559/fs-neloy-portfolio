@@ -2,6 +2,7 @@ backend:
   name: github
   repo: neloy559/fs-neloy-portfolio
   branch: main
+  auth_type: token
 
 media_folder: "assets/uploads"
 public_folder: "/assets/uploads"
