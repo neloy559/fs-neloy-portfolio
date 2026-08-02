@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FS Neloy | Admin Control Suite V2.0</title>
+
+  <!-- Anti-Cache Headers -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
+  <script>
+    // Force unregister all Service Workers & clear caches
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(registrations => {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+    if ('caches' in window) {
+      caches.keys().then(names => {
+        for (let name of names) {
+          caches.delete(name);
+        }
+      });
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #0c0c0c;
+      --surface-raised: #141414;
+      --surface-card: #1a1a1a;
+      --accent: #c8ff3f;
+      --accent-glow: rgba(200, 255, 63, 0.25);
+      --text: #f1efe9;
+      --text-secondary: #8a8884;
+      --border: rgba(255, 255, 255, 0.12);
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'Inter Tight', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Password Security Gate */
+    .auth-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px 36px;
+      box-shadow: 0 30px 90px rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .auth-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .auth-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    .auth-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .auth-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .auth-input:focus {
+      border-color: var(--accent);
+    }
+
+    .auth-btn {
+      padding: 14px 24px;
+      background: var(--accent);
+      color: #0a0a0a;
+      border: 0;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .auth-btn:hover {
+      background: #d5ff5e;
+      transform: translateY(-2px);
+    }
+
+    .auth-error {
+      font-size: 12px;
+      color: #ff5f5f;
+      display: none;
+      font-family: var(--font-mono);
+    }
+
+    /* Decorated Admin Shell Layout */
+    .admin-shell {
+      display: none;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    .admin-header {
+      background: rgba(20, 20, 20, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .admin-brand-badge {
+      background: var(--accent);
+      color: #000;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .admin-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-header {
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-site {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-site:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .btn-lock {
+      background: rgba(255, 95, 95, 0.15);
+      color: #ff7b7b;
+      border: 1px solid rgba(255, 95, 95, 0.4);
+    }
+
+    .btn-lock:hover {
+      background: rgba(255, 95, 95, 0.3);
+    }
+
+    /* Admin Container */
+    .admin-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 36px 32px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* Stat Metrics Bar */
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .stat-lbl {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .stat-val {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--accent);
+      font-family: var(--font-mono);
+    }
+
+    .stat-sub {
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    /* Admin Nav Tabs */
+    .admin-tabs {
+      display: flex;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--surface-raised);
+      color: var(--accent);
+      border-color: var(--border);
+    }
+
+    /* Tab Contents */
+    .tab-content {
+      display: none;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    .section-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title span {
+      color: var(--accent);
+    }
+
+    .btn-import {
+      padding: 10px 20px;
+      background: var(--accent);
+      color: #000;
+      border: 0;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn-import:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Project Cards Manager Grid */
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .pm-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .pm-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .pm-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 4px 8px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 4px;
+      color: var(--accent);
+    }
+
+    .pm-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .pm-pitch {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .pm-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #333;
+      transition: .3s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--accent);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+      background-color: #000;
+    }
+
+    /* 1-Click Remove Button */
+    .btn-remove-pm {
+      width: 100%;
+      padding: 8px 12px;
+      background: rgba(255, 95, 95, 0.1);
+      border: 1px solid rgba(255, 95, 95, 0.3);
+      border-radius: 6px;
+      color: #ff7b7b;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-remove-pm:hover {
+      background: rgba(255, 95, 95, 0.25);
+    }
+
+    /* Import Modal */
+    .import-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .import-modal.active {
+      display: flex;
+    }
+
+    .import-card {
+      width: 100%;
+      max-width: 520px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Password Security Gate -->
+  <div class="auth-gate" id="authGate">
+    <div class="auth-card">
+      <div class="auth-badge">
+        <span class="dot"></span>
+        RESTRICTED ACCESS
+      </div>
+      <h1 class="auth-title">FS Neloy Admin OS</h1>
+      <p class="auth-desc">Enter your master security password to access the portfolio control suite.</p>
+      
+      <form id="passForm" class="auth-form" autocomplete="off">
+        <input type="password" id="passInput" class="auth-input" placeholder="Enter Admin Password..." required autofocus />
+        <button type="submit" class="auth-btn">UNLOCK CONTROL DASHBOARD →</button>
+        <div id="passError" class="auth-error">❌ Incorrect password. Access denied.</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Import Project Modal -->
+  <div class="import-modal" id="importModal">
+    <div class="import-card">
+      <div class="section-title">
+        <span>➕</span> IMPORT NEW GITHUB PROJECT
+      </div>
+      <p class="auth-desc">Type your GitHub repository name or paste project URL to feature it on your portfolio.</p>
+
+      <form id="importForm" class="auth-form">
+        <div>
+          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">REPO NAME OR URL *</label>
+          <input type="text" id="importRepoInput" class="auth-input" placeholder="e.g. Mail-Nova---An-Email-Marketing-Agency" required />
+        </div>
+        <div>
+          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">BADGE / CATEGORY</label>
+          <input type="text" id="importBadgeInput" class="auth-input" placeholder="e.g. SAAS PLATFORM / AI TOOL" value="FEATURED REPO" />
+        </div>
+        <div>
+          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">LIVE WEBSITE URL (OPTIONAL)</label>
+          <input type="url" id="importLiveUrlInput" class="auth-input" placeholder="https://my-app.vercel.app" />
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 10px;">
+          <button type="submit" class="auth-btn" style="flex: 1;">SAVE &amp; IMPORT →</button>
+          <button type="button" id="closeImportBtn" class="auth-btn" style="background: #333; color: #fff;">CANCEL</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Decorated Admin Shell -->
+  <div class="admin-shell" id="adminShell">
+    <header class="admin-header">
+      <div class="admin-brand">
+        <span>FS NELOY</span>
+        <span class="admin-brand-badge">CONTROL SUITE V2.0</span>
+      </div>
+      <div class="admin-header-actions">
+        <a href="https://fs-neloy.vercel.app" target="_blank" class="btn-header btn-site">VIEW LIVE SITE ↗</a>
+        <button type="button" id="lockBtn" class="btn-header btn-lock">🔒 LOCK SESSION</button>
+      </div>
+    </header>
+
+    <main class="admin-container">
+      <!-- Live Metrics Cards -->
+      <div class="admin-stats">
+        <div class="stat-card">
+          <span class="stat-lbl">CURATED REPOS</span>
+          <span class="stat-val" id="statRepoCount">4</span>
+          <span class="stat-sub">Active Featured Projects</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-lbl">GITHUB SYNC</span>
+          <span class="stat-val" style="color: #4CAF50;">ONLINE</span>
+          <span class="stat-sub">Connected to @neloy559</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-lbl">DEPOSIT DOMAIN</span>
+          <span class="stat-val" style="font-size: 16px; margin-top: 6px;">fs-neloy.vercel.app</span>
+          <span class="stat-sub">Production Vercel Domain</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-lbl">CURRENT STATUS</span>
+          <span class="stat-val" style="font-size: 15px; margin-top: 6px;">Available for Contracts</span>
+          <span class="stat-sub">Full Stack &amp; SaaS Systems</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="admin-tabs">
+        <button class="tab-btn active" data-tab="tabProjects">⚡ PROJECT CTA &amp; REPO CONTROLLER</button>
+        <button class="tab-btn" data-tab="tabProfile">👤 PROFILE &amp; HERO BIO EDITOR</button>
+      </div>
+
+      <!-- Tab 1: Project Manager -->
+      <div class="tab-content active" id="tabProjects">
+        <div class="section-title-row">
+          <div class="section-title">
+            <span>//</span> CURATED PROJECTS &amp; 1-CLICK CONTROLLER
+          </div>
+          <button type="button" id="openImportBtn" class="btn-import">➕ IMPORT NEW PROJECT</button>
+        </div>
+
+        <div class="project-grid" id="adminProjectGrid">
+          <!-- LeadScraper Pro -->
+          <div class="pm-card" data-title="LeadScraper Pro">
+            <div class="pm-header">
+              <span class="pm-badge">SAAS PLATFORM</span>
+            </div>
+            <h3 class="pm-title">LeadScraper Pro</h3>
+            <p class="pm-pitch">No-AI BYODB Lead Scraping &amp; Outreach SaaS Platform designed for high-conversion lead generation.</p>
+            <div class="pm-controls">
+              <div class="toggle-row">
+                <span>VISIT WEBSITE CTA</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggleLeadScraper" />
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
+            </div>
+          </div>
+
+          <!-- Rupnogor E-Commerce -->
+          <div class="pm-card" data-title="Rupnogor E-Commerce">
+            <div class="pm-header">
+              <span class="pm-badge">FASHION E-COMMERCE</span>
+            </div>
+            <h3 class="pm-title">Rupnogor E-Commerce</h3>
+            <p class="pm-pitch">Premium Bangladeshi fashion e-commerce — sarees, fusion wear, and handcrafted jewelry.</p>
+            <div class="pm-controls">
+              <div class="toggle-row">
+                <span>VISIT WEBSITE CTA</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggleRupnogor" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
+            </div>
+          </div>
+
+          <!-- OCR Tools -->
+          <div class="pm-card" data-title="OCR Tools Platform">
+            <div class="pm-header">
+              <span class="pm-badge">AI / OCR</span>
+            </div>
+            <h3 class="pm-title">OCR Tools Platform</h3>
+            <p class="pm-pitch">Intelligent Document Processing with AI-powered text extraction, PDF splitting &amp; Telegram integration.</p>
+            <div class="pm-controls">
+              <div class="toggle-row">
+                <span>VISIT WEBSITE CTA</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggleOcr" />
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
+            </div>
+          </div>
+
+          <!-- Badol Tyre Ghar -->
+          <div class="pm-card" data-title="Badol Tyre Ghar V4">
+            <div class="pm-header">
+              <span class="pm-badge">B2B ENTERPRISE</span>
+            </div>
+            <h3 class="pm-title">Badol Tyre Ghar V4</h3>
+            <p class="pm-pitch">B2B wholesale tyre dealer management &amp; inventory order platform built with MERN stack.</p>
+            <div class="pm-controls">
+              <div class="toggle-row">
+                <span>VISIT WEBSITE CTA</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggleBadol" />
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Profile Settings -->
+      <div class="tab-content" id="tabProfile">
+        <div class="section-title">
+          <span>//</span> IDENTITY &amp; HERO BIO EDITOR
+        </div>
+        <div class="pm-card" style="max-width: 600px;">
+          <h3 class="pm-title">FS Neloy Profile</h3>
+          <p class="pm-pitch">Full Stack Web Developer (AI Assisted) — specialized in Next.js 16, TypeScript, Python, and B2B SaaS Systems.</p>
+          <div style="font-family: var(--font-mono); font-size: 13px; color: var(--text-secondary); margin-top: 10px;">
+            Email: seyasbro@gmail.com<br />
+            GitHub: @neloy559
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const authGate = document.getElementById('authGate');
+      const passForm = document.getElementById('passForm');
+      const passInput = document.getElementById('passInput');
+      const passError = document.getElementById('passError');
+      const adminShell = document.getElementById('adminShell');
+      const lockBtn = document.getElementById('lockBtn');
+
+      const MASTER_PASS = "neloy@portfolio.com";
+      const SESSION_KEY = "fs_neloy_admin_authenticated";
+
+      function unlockDashboard() {
+        if (authGate) authGate.style.display = 'none';
+        if (adminShell) adminShell.style.display = 'flex';
+        sessionStorage.setItem(SESSION_KEY, "true");
+      }
+
+      function lockDashboard() {
+        sessionStorage.removeItem(SESSION_KEY);
+        window.location.reload();
+      }
+
+      if (sessionStorage.getItem(SESSION_KEY) === "true") {
+        unlockDashboard();
+      }
+
+      passForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = passInput?.value.trim();
+
+        if (val === MASTER_PASS) {
+          if (passError) passError.style.display = 'none';
+          unlockDashboard();
+        } else {
+          if (passError) {
+            passError.style.display = 'block';
+            passError.textContent = '❌ Incorrect password. Access denied.';
+          }
+          if (passInput) {
+            passInput.value = '';
+            passInput.focus();
+          }
+        }
+      });
+
+      lockBtn?.addEventListener('click', lockDashboard);
+
+      // Import Project Modal Logic
+      const importModal = document.getElementById('importModal');
+      const openImportBtn = document.getElementById('openImportBtn');
+      const closeImportBtn = document.getElementById('closeImportBtn');
+      const importForm = document.getElementById('importForm');
+      const adminProjectGrid = document.getElementById('adminProjectGrid');
+      const statRepoCount = document.getElementById('statRepoCount');
+
+      openImportBtn?.addEventListener('click', () => importModal?.classList.add('active'));
+      closeImportBtn?.addEventListener('click', () => importModal?.classList.remove('active'));
+
+      function updateRepoCounter() {
+        if (!adminProjectGrid || !statRepoCount) return;
+        const total = adminProjectGrid.querySelectorAll('.pm-card').length;
+        statRepoCount.textContent = total;
+      }
+
+      importForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const repoName = document.getElementById('importRepoInput')?.value.trim();
+        const badge = document.getElementById('importBadgeInput')?.value.trim() || 'FEATURED REPO';
+        const liveUrl = document.getElementById('importLiveUrlInput')?.value.trim();
+
+        if (repoName) {
+          const cardHtml = `
+            <div class="pm-card" data-title="${repoName}">
+              <div class="pm-header">
+                <span class="pm-badge">${badge.toUpperCase()}</span>
+              </div>
+              <h3 class="pm-title">${repoName}</h3>
+              <p class="pm-pitch">Newly imported repository from @neloy559.</p>
+              <div class="pm-controls">
+                <div class="toggle-row">
+                  <span>VISIT WEBSITE CTA</span>
+                  <label class="toggle-switch">
+                    <input type="checkbox" ${liveUrl ? 'checked' : ''} />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
+              </div>
+            </div>
+          `;
+          adminProjectGrid?.insertAdjacentHTML('afterbegin', cardHtml);
+          updateRepoCounter();
+          importForm.reset();
+          importModal?.classList.remove('active');
+          bindRemoveButtons();
+          alert(`✓ Successfully imported ${repoName} into your portfolio control suite!`);
+        }
+      });
+
+      // 1-Click Remove Button Event Delegation
+      function bindRemoveButtons() {
+        document.querySelectorAll('.btn-remove-pm').forEach(btn => {
+          btn.onclick = (e) => {
+            const card = e.target.closest('.pm-card');
+            const title = card?.getAttribute('data-title') || 'this project';
+            if (confirm(`Are you sure you want to remove "${title}" from your featured portfolio list?`)) {
+              card.remove();
+              updateRepoCounter();
+            }
+          };
+        });
+      }
+      bindRemoveButtons();
+
+      // Tabs Switcher
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabContents = document.querySelectorAll('.tab-content');
+
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabBtns.forEach(b => b.classList.remove('active'));
+          tabContents.forEach(c => c.classList.remove('active'));
+
+          btn.classList.add('active');
+          const targetId = btn.getAttribute('data-tab');
+          const targetEl = document.getElementById(targetId);
+          if (targetEl) targetEl.classList.add('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
