@@ -210,6 +210,15 @@
       font-weight: 800;
     }
 
+    .save-status-pill {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #4CAF50;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .admin-header-actions {
       display: flex;
       align-items: center;
@@ -586,6 +595,7 @@
       <div class="admin-brand">
         <span>FS NELOY</span>
         <span class="admin-brand-badge">CONTROL SUITE V2.0</span>
+        <span class="save-status-pill" id="saveStatusPill">✓ Live Auto-Saved</span>
       </div>
       <div class="admin-header-actions">
         <a href="https://fs-neloy.vercel.app" target="_blank" class="btn-header btn-site">VIEW LIVE SITE ↗</a>
@@ -634,81 +644,7 @@
         </div>
 
         <div class="project-grid" id="adminProjectGrid">
-          <!-- LeadScraper Pro -->
-          <div class="pm-card" data-title="LeadScraper Pro">
-            <div class="pm-header">
-              <span class="pm-badge">SAAS PLATFORM</span>
-            </div>
-            <h3 class="pm-title">LeadScraper Pro</h3>
-            <p class="pm-pitch">No-AI BYODB Lead Scraping &amp; Outreach SaaS Platform designed for high-conversion lead generation.</p>
-            <div class="pm-controls">
-              <div class="toggle-row">
-                <span>VISIT WEBSITE CTA</span>
-                <label class="toggle-switch">
-                  <input type="checkbox" id="toggleLeadScraper" />
-                  <span class="slider"></span>
-                </label>
-              </div>
-              <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
-            </div>
-          </div>
-
-          <!-- Rupnogor E-Commerce -->
-          <div class="pm-card" data-title="Rupnogor E-Commerce">
-            <div class="pm-header">
-              <span class="pm-badge">FASHION E-COMMERCE</span>
-            </div>
-            <h3 class="pm-title">Rupnogor E-Commerce</h3>
-            <p class="pm-pitch">Premium Bangladeshi fashion e-commerce — sarees, fusion wear, and handcrafted jewelry.</p>
-            <div class="pm-controls">
-              <div class="toggle-row">
-                <span>VISIT WEBSITE CTA</span>
-                <label class="toggle-switch">
-                  <input type="checkbox" id="toggleRupnogor" checked />
-                  <span class="slider"></span>
-                </label>
-              </div>
-              <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
-            </div>
-          </div>
-
-          <!-- OCR Tools -->
-          <div class="pm-card" data-title="OCR Tools Platform">
-            <div class="pm-header">
-              <span class="pm-badge">AI / OCR</span>
-            </div>
-            <h3 class="pm-title">OCR Tools Platform</h3>
-            <p class="pm-pitch">Intelligent Document Processing with AI-powered text extraction, PDF splitting &amp; Telegram integration.</p>
-            <div class="pm-controls">
-              <div class="toggle-row">
-                <span>VISIT WEBSITE CTA</span>
-                <label class="toggle-switch">
-                  <input type="checkbox" id="toggleOcr" />
-                  <span class="slider"></span>
-                </label>
-              </div>
-              <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
-            </div>
-          </div>
-
-          <!-- Badol Tyre Ghar -->
-          <div class="pm-card" data-title="Badol Tyre Ghar V4">
-            <div class="pm-header">
-              <span class="pm-badge">B2B ENTERPRISE</span>
-            </div>
-            <h3 class="pm-title">Badol Tyre Ghar V4</h3>
-            <p class="pm-pitch">B2B wholesale tyre dealer management &amp; inventory order platform built with MERN stack.</p>
-            <div class="pm-controls">
-              <div class="toggle-row">
-                <span>VISIT WEBSITE CTA</span>
-                <label class="toggle-switch">
-                  <input type="checkbox" id="toggleBadol" />
-                  <span class="slider"></span>
-                </label>
-              </div>
-              <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
-            </div>
-          </div>
+          <!-- Initial 4 Default Cards if no saved projects -->
         </div>
       </div>
 
@@ -737,9 +673,18 @@
       const passError = document.getElementById('passError');
       const adminShell = document.getElementById('adminShell');
       const lockBtn = document.getElementById('lockBtn');
+      const saveStatusPill = document.getElementById('saveStatusPill');
 
       const MASTER_PASS = "neloy@portfolio.com";
       const SESSION_KEY = "fs_neloy_admin_authenticated";
+      const STORAGE_KEY = "fs_neloy_curated_projects";
+
+      const DEFAULT_PROJECTS = [
+        { name: 'LeadScraper Pro', badge: 'SAAS PLATFORM', pitch: 'No-AI BYODB Lead Scraping & Outreach SaaS Platform designed for high-conversion lead generation.', homepage: '', showVisitBtn: false },
+        { name: 'Rupnogor E-Commerce', badge: 'FASHION E-COMMERCE', pitch: 'Premium Bangladeshi fashion e-commerce — sarees, fusion wear, and handcrafted jewelry.', homepage: 'https://rupnogor-project.vercel.app', showVisitBtn: true },
+        { name: 'OCR Tools Platform', badge: 'AI DOCUMENT PROCESSING', pitch: 'Intelligent Document Processing with AI-powered text extraction, PDF splitting & Telegram integration.', homepage: '', showVisitBtn: false },
+        { name: 'Badol Tyre Ghar V4', badge: 'B2B ENTERPRISE', pitch: 'B2B wholesale tyre dealer management & inventory order platform built with MERN stack.', homepage: '', showVisitBtn: false }
+      ];
 
       let githubReposCache = [];
 
@@ -748,6 +693,7 @@
         if (adminShell) adminShell.style.display = 'flex';
         sessionStorage.setItem(SESSION_KEY, "true");
         fetchLiveGithubRepos();
+        renderAdminProjects();
       }
 
       function lockDashboard() {
@@ -779,6 +725,96 @@
       });
 
       lockBtn?.addEventListener('click', lockDashboard);
+
+      // Auto-save active project state to localStorage
+      function saveProjectsState() {
+        const grid = document.getElementById('adminProjectGrid');
+        if (!grid) return;
+
+        const cards = grid.querySelectorAll('.pm-card');
+        const projectsList = [];
+
+        cards.forEach(card => {
+          const name = card.getAttribute('data-title') || card.querySelector('.pm-title')?.textContent || '';
+          const badge = card.querySelector('.pm-badge')?.textContent || 'FEATURED REPO';
+          const pitch = card.querySelector('.pm-pitch')?.textContent || '';
+          const toggleInput = card.querySelector('.toggle-switch input');
+          const showVisitBtn = toggleInput ? toggleInput.checked : false;
+          const liveUrl = card.getAttribute('data-live-url') || (showVisitBtn ? 'https://rupnogor-project.vercel.app' : '');
+
+          if (name) {
+            projectsList.push({
+              name, badge, pitch, homepage: liveUrl, showVisitBtn
+            });
+          }
+        });
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(projectsList));
+        updateRepoCounter();
+        if (saveStatusPill) {
+          saveStatusPill.textContent = '✓ Live Auto-Saved!';
+          setTimeout(() => saveStatusPill.textContent = '✓ Live Auto-Saved', 2000);
+        }
+      }
+
+      // Render Admin Project Grid
+      function renderAdminProjects() {
+        const grid = document.getElementById('adminProjectGrid');
+        if (!grid) return;
+
+        const saved = localStorage.getItem(STORAGE_KEY);
+        const projectsList = saved ? JSON.parse(saved) : DEFAULT_PROJECTS;
+
+        grid.innerHTML = projectsList.map(proj => `
+          <div class="pm-card" data-title="${proj.name}" data-live-url="${proj.homepage || ''}">
+            <div class="pm-header">
+              <span class="pm-badge">${(proj.badge || 'FEATURED REPO').toUpperCase()}</span>
+            </div>
+            <h3 class="pm-title">${proj.name}</h3>
+            <p class="pm-pitch">${proj.pitch || 'Curated production repository.'}</p>
+            <div class="pm-controls">
+              <div class="toggle-row">
+                <span>VISIT WEBSITE CTA</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" ${proj.showVisitBtn ? 'checked' : ''} class="visit-toggle" />
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
+            </div>
+          </div>
+        `).join('');
+
+        bindCardEvents();
+        updateRepoCounter();
+      }
+
+      function bindCardEvents() {
+        // Toggle Listener
+        document.querySelectorAll('.visit-toggle').forEach(t => {
+          t.onchange = () => saveProjectsState();
+        });
+
+        // 1-Click Remove Listener
+        document.querySelectorAll('.btn-remove-pm').forEach(btn => {
+          btn.onclick = (e) => {
+            const card = e.target.closest('.pm-card');
+            const title = card?.getAttribute('data-title') || 'this project';
+            if (confirm(`Are you sure you want to remove "${title}" from your featured portfolio list?`)) {
+              card.remove();
+              saveProjectsState();
+            }
+          };
+        });
+      }
+
+      function updateRepoCounter() {
+        const grid = document.getElementById('adminProjectGrid');
+        const statRepoCount = document.getElementById('statRepoCount');
+        if (!grid || !statRepoCount) return;
+        const total = grid.querySelectorAll('.pm-card').length;
+        statRepoCount.textContent = total;
+      }
 
       // Fetch Live GitHub Repositories for Picker Dropdown
       async function fetchLiveGithubRepos() {
@@ -822,17 +858,9 @@
       const openImportBtn = document.getElementById('openImportBtn');
       const closeImportBtn = document.getElementById('closeImportBtn');
       const importForm = document.getElementById('importForm');
-      const adminProjectGrid = document.getElementById('adminProjectGrid');
-      const statRepoCount = document.getElementById('statRepoCount');
 
       openImportBtn?.addEventListener('click', () => importModal?.classList.add('active'));
       closeImportBtn?.addEventListener('click', () => importModal?.classList.remove('active'));
-
-      function updateRepoCounter() {
-        if (!adminProjectGrid || !statRepoCount) return;
-        const total = adminProjectGrid.querySelectorAll('.pm-card').length;
-        statRepoCount.textContent = total;
-      }
 
       importForm?.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -841,8 +869,9 @@
         const liveUrl = document.getElementById('importLiveUrlInput')?.value.trim();
 
         if (repoName) {
+          const grid = document.getElementById('adminProjectGrid');
           const cardHtml = `
-            <div class="pm-card" data-title="${repoName}">
+            <div class="pm-card" data-title="${repoName}" data-live-url="${liveUrl || ''}">
               <div class="pm-header">
                 <span class="pm-badge">${badge.toUpperCase()}</span>
               </div>
@@ -852,7 +881,7 @@
                 <div class="toggle-row">
                   <span>VISIT WEBSITE CTA</span>
                   <label class="toggle-switch">
-                    <input type="checkbox" ${liveUrl ? 'checked' : ''} />
+                    <input type="checkbox" ${liveUrl ? 'checked' : ''} class="visit-toggle" />
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -860,29 +889,14 @@
               </div>
             </div>
           `;
-          adminProjectGrid?.insertAdjacentHTML('afterbegin', cardHtml);
-          updateRepoCounter();
+          grid?.insertAdjacentHTML('afterbegin', cardHtml);
+          bindCardEvents();
+          saveProjectsState();
           importForm.reset();
           importModal?.classList.remove('active');
-          bindRemoveButtons();
-          alert(`✓ Successfully imported ${repoName} into your portfolio control suite!`);
+          alert(`✓ Successfully imported "${repoName}"! Your portfolio has auto-updated live.`);
         }
       });
-
-      // 1-Click Remove Button Event Delegation
-      function bindRemoveButtons() {
-        document.querySelectorAll('.btn-remove-pm').forEach(btn => {
-          btn.onclick = (e) => {
-            const card = e.target.closest('.pm-card');
-            const title = card?.getAttribute('data-title') || 'this project';
-            if (confirm(`Are you sure you want to remove "${title}" from your featured portfolio list?`)) {
-              card.remove();
-              updateRepoCounter();
-            }
-          };
-        });
-      }
-      bindRemoveButtons();
 
       // Tabs Switcher
       const tabBtns = document.querySelectorAll('.tab-btn');

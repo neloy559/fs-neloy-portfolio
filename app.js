@@ -93,18 +93,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 4. Selective Featured Repositories Filter
-  // Specify exact repository names you want to showcase
-  const SELECTIVE_REPO_NAMES = [
-    'leadscraper-pro',
-    'rupnogor-project',
-    'ocr-tools',
-    'badol-tyre-ghar-v4'
+  // 4. Selective Featured Repositories Filter with Admin OS Persistence Bridge
+  const DEFAULT_SELECTIVE_REPOS = [
+    { name: 'leadscraper-pro', badge: 'SAAS PLATFORM', pitch: 'No-AI BYODB Lead Scraping & Outreach SaaS Platform designed for high-conversion lead generation.', homepage: '', showVisitBtn: false },
+    { name: 'rupnogor-project', badge: 'FASHION E-COMMERCE', pitch: 'Premium Bangladeshi fashion e-commerce — sarees, fusion wear, and handcrafted jewelry.', homepage: 'https://rupnogor-project.vercel.app', showVisitBtn: true },
+    { name: 'ocr-tools', badge: 'AI DOCUMENT PROCESSING', pitch: 'Intelligent Document Processing with AI-powered text extraction, PDF splitting & Telegram integration.', homepage: '', showVisitBtn: false },
+    { name: 'badol-tyre-ghar-v4', badge: 'B2B ENTERPRISE', pitch: 'B2B wholesale tyre dealer management & inventory order platform built with MERN stack.', homepage: '', showVisitBtn: false }
   ];
 
   async function fetchGitHubData() {
     try {
-      // Fetch User Info for overall count
+      // Fetch User Info
       const userRes = await fetch('https://api.github.com/users/neloy559');
       if (userRes.ok) {
         const userData = await userRes.json();
@@ -114,50 +113,54 @@ document.addEventListener('DOMContentLoaded', () => {
         if (statRepos) statRepos.innerHTML = `${userData.public_repos || 19}<span class="u">+</span>`;
       }
 
-      // Fetch All Repos and filter only SELECTIVE_REPO_NAMES
-      const reposRes = await fetch('https://api.github.com/users/neloy559/repos?sort=updated&per_page=30');
+      // Check if Admin Dashboard saved custom curated repos list in localStorage
+      let savedProjects = localStorage.getItem('fs_neloy_curated_projects');
+      let activeProjects = savedProjects ? JSON.parse(savedProjects) : DEFAULT_SELECTIVE_REPOS;
+
+      // Fetch All Repos to get live stars, forks, and updated dates
+      const reposRes = await fetch('https://api.github.com/users/neloy559/repos?sort=updated&per_page=100');
+      let githubReposMap = {};
       if (reposRes.ok) {
         const allRepos = await reposRes.json();
-        
-        // Filter to include only specified selective repos
-        const selectedRepos = allRepos.filter(repo => 
-          SELECTIVE_REPO_NAMES.includes(repo.name.toLowerCase())
-        );
+        allRepos.forEach(r => githubReposMap[r.name.toLowerCase()] = r);
+      }
 
-        const grid = document.getElementById('liveActivityGrid');
-        if (grid && selectedRepos.length > 0) {
-          grid.innerHTML = selectedRepos.map(repo => {
-            const hasLiveDomain = repo.homepage && (repo.homepage.startsWith('http://') || repo.homepage.startsWith('https://')) && repo.homepage.length > 10;
-            const visitBtnHtml = hasLiveDomain 
-              ? `<a href="${repo.homepage}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">VISIT WEBSITE ↗</a>` 
-              : '';
+      const grid = document.getElementById('liveActivityGrid');
+      if (grid && activeProjects.length > 0) {
+        grid.innerHTML = activeProjects.map(proj => {
+          const repoData = githubReposMap[proj.name.toLowerCase()] || {};
+          const liveUrl = proj.homepage || repoData.homepage;
+          const showVisitBtn = proj.showVisitBtn !== undefined ? proj.showVisitBtn : (liveUrl && liveUrl.startsWith('http'));
+          
+          const visitBtnHtml = (showVisitBtn && liveUrl && liveUrl.startsWith('http'))
+            ? `<a href="${liveUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">VISIT WEBSITE ↗</a>` 
+            : '';
 
-            return `
-              <article class="feature">
-                <div class="feature-head">
-                  <div class="feature-badge">
-                    <span class="dot"></span>
-                    ${repo.language ? repo.language.toUpperCase() : 'CURATED REPO'}
-                  </div>
-                  <span class="feature-year">UPDATED ${new Date(repo.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+          return `
+            <article class="feature">
+              <div class="feature-head">
+                <div class="feature-badge">
+                  <span class="dot"></span>
+                  ${(proj.badge || repoData.language || 'FEATURED REPO').toUpperCase()}
                 </div>
-                <div class="feature-headline">
-                  <h3 class="feature-title">${repo.name}</h3>
-                  <p class="feature-pitch">${repo.description || 'Selective production project by FS Neloy.'}</p>
-                </div>
-                <div class="feature-stack">
-                  <span>⭐ ${repo.stargazers_count} Stars</span>
-                  <span>🍴 ${repo.forks_count} Forks</span>
-                  <span>${repo.language || 'Code'}</span>
-                </div>
-                <div class="feature-actions">
-                  <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">VIEW REPOSITORY <span class="arrow"></span></a>
-                  ${visitBtnHtml}
-                </div>
-              </article>
-            `;
-          }).join('');
-        }
+                <span class="feature-year">UPDATED ${repoData.updated_at ? new Date(repoData.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '2026'}</span>
+              </div>
+              <div class="feature-headline">
+                <h3 class="feature-title">${proj.name}</h3>
+                <p class="feature-pitch">${proj.pitch || repoData.description || 'Curated production project by FS Neloy.'}</p>
+              </div>
+              <div class="feature-stack">
+                <span>⭐ ${repoData.stargazers_count || 0} Stars</span>
+                <span>🍴 ${repoData.forks_count || 0} Forks</span>
+                <span>${repoData.language || 'TypeScript'}</span>
+              </div>
+              <div class="feature-actions">
+                <a href="${repoData.html_url || 'https://github.com/neloy559/' + proj.name}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">VIEW REPOSITORY <span class="arrow"></span></a>
+                ${visitBtnHtml}
+              </div>
+            </article>
+          `;
+        }).join('');
       }
     } catch (err) {
       console.warn('GitHub API selective fetch fallback engaged:', err);
