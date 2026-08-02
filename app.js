@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 4. Selective Featured Repositories Filter with Admin OS Persistence Bridge
+  // 4. Featured Projects & Live Activity Sync with Admin OS
   const DEFAULT_SELECTIVE_REPOS = [
     { name: 'leadscraper-pro', badge: 'SAAS PLATFORM', pitch: 'No-AI BYODB Lead Scraping & Outreach SaaS Platform designed for high-conversion lead generation.', homepage: '', showVisitBtn: false },
     { name: 'rupnogor-project', badge: 'FASHION E-COMMERCE', pitch: 'Premium Bangladeshi fashion e-commerce — sarees, fusion wear, and handcrafted jewelry.', homepage: 'https://rupnogor-project.vercel.app', showVisitBtn: true },
@@ -113,21 +113,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (statRepos) statRepos.innerHTML = `${userData.public_repos || 19}<span class="u">+</span>`;
       }
 
-      // Check if Admin Dashboard saved custom curated repos list in localStorage
-      let savedProjects = localStorage.getItem('fs_neloy_curated_projects');
-      let activeProjects = savedProjects ? JSON.parse(savedProjects) : DEFAULT_SELECTIVE_REPOS;
-
-      // Fetch All Repos to get live stars, forks, and updated dates
+      // Fetch All Repos from GitHub
       const reposRes = await fetch('https://api.github.com/users/neloy559/repos?sort=updated&per_page=100');
+      let githubRepos = [];
       let githubReposMap = {};
       if (reposRes.ok) {
-        const allRepos = await reposRes.json();
-        allRepos.forEach(r => githubReposMap[r.name.toLowerCase()] = r);
+        githubRepos = await reposRes.json();
+        githubRepos.forEach(r => githubReposMap[r.name.toLowerCase()] = r);
       }
 
-      const grid = document.getElementById('liveActivityGrid');
-      if (grid && activeProjects.length > 0) {
-        grid.innerHTML = activeProjects.map(proj => {
+      // A. Populate FEATURED PROJECTS (#featuredProjectsGrid) from Admin OS
+      let savedProjects = localStorage.getItem('fs_neloy_curated_projects');
+      let curatedProjects = savedProjects ? JSON.parse(savedProjects) : DEFAULT_SELECTIVE_REPOS;
+
+      const featuredGrid = document.getElementById('featuredProjectsGrid');
+      if (featuredGrid && curatedProjects.length > 0) {
+        featuredGrid.innerHTML = curatedProjects.map(proj => {
           const repoData = githubReposMap[proj.name.toLowerCase()] || {};
           const liveUrl = proj.homepage || repoData.homepage;
           const showVisitBtn = proj.showVisitBtn !== undefined ? proj.showVisitBtn : (liveUrl && liveUrl.startsWith('http'));
@@ -140,10 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <article class="feature">
               <div class="feature-head">
                 <div class="feature-badge">
-                  <span class="dot"></span>
+                  <span class="dot" aria-hidden="true"></span>
                   ${(proj.badge || repoData.language || 'FEATURED REPO').toUpperCase()}
                 </div>
-                <span class="feature-year">UPDATED ${repoData.updated_at ? new Date(repoData.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '2026'}</span>
+                <span class="feature-year">2026</span>
               </div>
               <div class="feature-headline">
                 <h3 class="feature-title">${proj.name}</h3>
@@ -155,7 +156,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span>${repoData.language || 'TypeScript'}</span>
               </div>
               <div class="feature-actions">
-                <a href="${repoData.html_url || 'https://github.com/neloy559/' + proj.name}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">VIEW REPOSITORY <span class="arrow"></span></a>
+                <a href="${repoData.html_url || 'https://github.com/neloy559/' + proj.name}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">VIEW REPOSITORY <span class="arrow" aria-hidden="true"></span></a>
+                ${visitBtnHtml}
+              </div>
+            </article>
+          `;
+        }).join('');
+      }
+
+      // B. Populate RECENT ACTIVITY (#liveActivityGrid) from GitHub Feed
+      const recentGrid = document.getElementById('liveActivityGrid');
+      if (recentGrid && githubRepos.length > 0) {
+        recentGrid.innerHTML = githubRepos.slice(0, 6).map(repo => {
+          const hasHomepage = repo.homepage && repo.homepage.startsWith('http');
+          const visitBtnHtml = hasHomepage
+            ? `<a href="${repo.homepage}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">VISIT WEBSITE ↗</a>`
+            : '';
+
+          return `
+            <article class="feature">
+              <div class="feature-head">
+                <div class="feature-badge">
+                  <span class="dot" aria-hidden="true"></span>
+                  ${(repo.language || 'REPOSITORY').toUpperCase()}
+                </div>
+                <span class="feature-year">${new Date(repo.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+              </div>
+              <div class="feature-headline">
+                <h3 class="feature-title">${repo.name}</h3>
+                <p class="feature-pitch">${repo.description || 'Public repository by @neloy559.'}</p>
+              </div>
+              <div class="feature-stack">
+                <span>⭐ ${repo.stargazers_count || 0}</span>
+                <span>🍴 ${repo.forks_count || 0}</span>
+                <span>${repo.language || 'Code'}</span>
+              </div>
+              <div class="feature-actions">
+                <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">VIEW REPOSITORY <span class="arrow" aria-hidden="true"></span></a>
                 ${visitBtnHtml}
               </div>
             </article>
@@ -163,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
       }
     } catch (err) {
-      console.warn('GitHub API selective fetch fallback engaged:', err);
+      console.warn('GitHub API fetch fallback engaged:', err);
     }
   }
   fetchGitHubData();
