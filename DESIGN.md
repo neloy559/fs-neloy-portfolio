@@ -1,16 +1,16 @@
-# Kethan Dosapati
+# F.S. Neloy
 
 ## Mission
-Create implementation-ready, token-driven UI guidance for Kethan Dosapati that is optimized for consistency, accessibility, and fast delivery across marketing site.
+Deliver implementation-ready design-system guidance for F.S. Neloy that can be applied consistently across portfolio, SaaS platforms, B2B portals, and web applications.
 
 ## Brand
-- Product/brand: Kethan Dosapati
-- URL: https://dkethan.github.io/portfolio/#work
-- Audience: developers and technical teams
-- Product surface: marketing site
+- Product/brand: F.S. Neloy
+- URL: https://neloy559.github.io/portfolio/
+- Audience: developers, technical teams, and B2B clients
+- Product surface: marketing site & SaaS platforms
 
 ## Style Foundations
-- Visual style: structured, tokenized, content-first
+- Visual style: structured, accessible, implementation-first
 - Main font style: `font.family.primary=JetBrains Mono`, `font.family.stack=JetBrains Mono, ui-monospace, SF Mono, Menlo, monospace, sans-serif`, `font.size.base=16px`, `font.weight.base=400`, `font.lineHeight.base=24.8px`
 - Typography scale: `font.size.xs=10px`, `font.size.sm=10.5px`, `font.size.md=11px`, `font.size.lg=13.5px`, `font.size.xl=14.5px`, `font.size.2xl=15px`, `font.size.3xl=16px`, `font.size.4xl=17.17px`
 - Color palette: `color.text.primary=#f1efe9`, `color.text.secondary=#8a8884`, `color.border.muted=#ffffff`, `color.text.inverse=#56544f`, `color.surface.base=#000000`, `color.surface.muted=#c8ff3f`, `color.surface.raised=#161616`, `color.surface.strong=#0c0c0c`
@@ -24,46 +24,15 @@ Create implementation-ready, token-driven UI guidance for Kethan Dosapati that i
 - Contrast constraints required.
 
 ## Writing Tone
-Concise, confident, implementation-focused.
+concise, confident, implementation-focused
 
 ## Rules: Do
-- Use semantic tokens, not raw hex values, in component guidance.
-- Every component must define states for default, hover, focus-visible, active, disabled, loading, and error.
-- Component behavior should specify responsive and edge-case handling.
-- Interactive components must document keyboard, pointer, and touch behavior.
+- Use semantic tokens, not raw hex values in component guidance.
+- Every component must define required states: default, hover, focus-visible, active, disabled, loading, error.
+- Responsive behavior and edge-case handling should be specified for every component family.
 - Accessibility acceptance criteria must be testable in implementation.
 
 ## Rules: Don't
 - Do not allow low-contrast text or hidden focus indicators.
 - Do not introduce one-off spacing or typography exceptions.
 - Do not use ambiguous labels or non-descriptive actions.
-- Do not ship component guidance without explicit state rules.
-
-## Guideline Authoring Workflow
-1. Restate design intent in one sentence.
-2. Define foundations and semantic tokens.
-3. Define component anatomy, variants, interactions, and state behavior.
-4. Add accessibility acceptance criteria with pass/fail checks.
-5. Add anti-patterns, migration notes, and edge-case handling.
-6. End with a QA checklist.
-
-## Required Output Structure
-- Context and goals.
-- Design tokens and foundations.
-- Component-level rules (anatomy, variants, states, responsive behavior).
-- Accessibility requirements and testable acceptance criteria.
-- Content and tone standards with examples.
-- Anti-patterns and prohibited implementations.
-- QA checklist.
-
-## Component Rule Expectations
-- Include keyboard, pointer, and touch behavior.
-- Include spacing and typography token requirements.
-- Include long-content, overflow, and empty-state handling.
-- Include known page component density: links (35), buttons (14), cards (2), lists (2), inputs (1), navigation (1).
-
-## Quality Gates
-- Every non-negotiable rule must use "must".
-- Every recommendation should use "should".
-- Every accessibility rule must be testable in implementation.
-- Teams should prefer system consistency over local visual exceptions.
