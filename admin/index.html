@@ -308,6 +308,12 @@
       display: flex;
     }
 
+    .section-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
     .section-title {
       font-size: 18px;
       font-weight: 700;
@@ -319,6 +325,23 @@
 
     .section-title span {
       color: var(--accent);
+    }
+
+    .btn-import {
+      padding: 10px 20px;
+      background: var(--accent);
+      color: #000;
+      border: 0;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn-import:hover {
+      transform: translateY(-2px);
     }
 
     /* Project Cards Manager Grid */
@@ -424,7 +447,35 @@
       background-color: #000;
     }
 
-    /* CMS Embedded Container */
+    /* Import Modal */
+    .import-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .import-modal.active {
+      display: flex;
+    }
+
+    .import-card {
+      width: 100%;
+      max-width: 520px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
     #cmsView {
       border: 1px solid var(--border);
       border-radius: 16px;
@@ -454,6 +505,35 @@
     </div>
   </div>
 
+  <!-- Import Project Modal -->
+  <div class="import-modal" id="importModal">
+    <div class="import-card">
+      <div class="section-title">
+        <span>➕</span> IMPORT NEW GITHUB PROJECT
+      </div>
+      <p class="auth-desc">Type your GitHub repository name or paste project URL to feature it on your portfolio.</p>
+
+      <form id="importForm" class="auth-form">
+        <div>
+          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">REPO NAME OR URL *</label>
+          <input type="text" id="importRepoInput" class="auth-input" placeholder="e.g. Mail-Nova---An-Email-Marketing-Agency" required />
+        </div>
+        <div>
+          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">BADGE / CATEGORY</label>
+          <input type="text" id="importBadgeInput" class="auth-input" placeholder="e.g. SAAS PLATFORM / AI TOOL" value="FEATURED REPO" />
+        </div>
+        <div>
+          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">LIVE WEBSITE URL (OPTIONAL)</label>
+          <input type="url" id="importLiveUrlInput" class="auth-input" placeholder="https://my-app.vercel.app" />
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 10px;">
+          <button type="submit" class="auth-btn" style="flex: 1;">SAVE &amp; IMPORT →</button>
+          <button type="button" id="closeImportBtn" class="auth-btn" style="background: #333; color: #fff;">CANCEL</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Decorated Admin Shell -->
   <div class="admin-shell" id="adminShell">
     <header class="admin-header">
@@ -472,7 +552,7 @@
       <div class="admin-stats">
         <div class="stat-card">
           <span class="stat-lbl">CURATED REPOS</span>
-          <span class="stat-val">4</span>
+          <span class="stat-val" id="statRepoCount">4</span>
           <span class="stat-sub">Active Featured Projects</span>
         </div>
         <div class="stat-card">
@@ -501,10 +581,14 @@
 
       <!-- Tab 1: Project Manager -->
       <div class="tab-content active" id="tabProjects">
-        <div class="section-title">
-          <span>//</span> CURATED PROJECT CTA CONTROLLER
+        <div class="section-title-row">
+          <div class="section-title">
+            <span>//</span> CURATED PROJECT CTA CONTROLLER
+          </div>
+          <button type="button" id="openImportBtn" class="btn-import">➕ IMPORT NEW PROJECT</button>
         </div>
-        <div class="project-grid">
+
+        <div class="project-grid" id="adminProjectGrid">
           <!-- LeadScraper Pro -->
           <div class="pm-card">
             <div class="pm-header">
@@ -658,6 +742,53 @@
       });
 
       lockBtn?.addEventListener('click', lockDashboard);
+
+      // Import Project Modal Logic
+      const importModal = document.getElementById('importModal');
+      const openImportBtn = document.getElementById('openImportBtn');
+      const closeImportBtn = document.getElementById('closeImportBtn');
+      const importForm = document.getElementById('importForm');
+      const adminProjectGrid = document.getElementById('adminProjectGrid');
+      const statRepoCount = document.getElementById('statRepoCount');
+
+      openImportBtn?.addEventListener('click', () => importModal?.classList.add('active'));
+      closeImportBtn?.addEventListener('click', () => importModal?.classList.remove('active'));
+
+      importForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const repoName = document.getElementById('importRepoInput')?.value.trim();
+        const badge = document.getElementById('importBadgeInput')?.value.trim() || 'FEATURED REPO';
+        const liveUrl = document.getElementById('importLiveUrlInput')?.value.trim();
+
+        if (repoName) {
+          const cardHtml = `
+            <div class="pm-card">
+              <div class="pm-header">
+                <span class="pm-badge">${badge.toUpperCase()}</span>
+              </div>
+              <h3 class="pm-title">${repoName}</h3>
+              <p class="pm-pitch">Newly imported repository from @neloy559.</p>
+              <div class="pm-controls">
+                <div class="toggle-row">
+                  <span>VISIT WEBSITE CTA</span>
+                  <label class="toggle-switch">
+                    <input type="checkbox" ${liveUrl ? 'checked' : ''} />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          `;
+          adminProjectGrid?.insertAdjacentHTML('afterbegin', cardHtml);
+          if (statRepoCount) {
+            const curr = parseInt(statRepoCount.textContent || '4', 10);
+            statRepoCount.textContent = curr + 1;
+          }
+          importForm.reset();
+          importModal?.classList.remove('active');
+          alert(`✓ Successfully imported ${repoName} into your portfolio control suite!`);
+        }
+      });
 
       // Tabs Switcher
       const tabBtns = document.querySelectorAll('.tab-btn');
