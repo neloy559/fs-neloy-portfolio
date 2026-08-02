@@ -93,10 +93,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 4. Live GitHub API Sync (Only render VISIT WEBSITE CTA if homepage/domain is set)
+  // 4. Selective Featured Repositories Filter
+  // Specify exact repository names you want to showcase
+  const SELECTIVE_REPO_NAMES = [
+    'leadscraper-pro',
+    'rupnogor-project',
+    'ocr-tools',
+    'badol-tyre-ghar-v4'
+  ];
+
   async function fetchGitHubData() {
     try {
-      // Fetch User Info
+      // Fetch User Info for overall count
       const userRes = await fetch('https://api.github.com/users/neloy559');
       if (userRes.ok) {
         const userData = await userRes.json();
@@ -106,14 +114,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (statRepos) statRepos.innerHTML = `${userData.public_repos || 19}<span class="u">+</span>`;
       }
 
-      // Fetch Recent Repos
-      const reposRes = await fetch('https://api.github.com/users/neloy559/repos?sort=updated&per_page=4');
+      // Fetch All Repos and filter only SELECTIVE_REPO_NAMES
+      const reposRes = await fetch('https://api.github.com/users/neloy559/repos?sort=updated&per_page=30');
       if (reposRes.ok) {
-        const repos = await reposRes.json();
+        const allRepos = await reposRes.json();
+        
+        // Filter to include only specified selective repos
+        const selectedRepos = allRepos.filter(repo => 
+          SELECTIVE_REPO_NAMES.includes(repo.name.toLowerCase())
+        );
+
         const grid = document.getElementById('liveActivityGrid');
-        if (grid && repos.length > 0) {
-          grid.innerHTML = repos.map(repo => {
-            // Check if homepage is set to a real deployment URL (vercel.app, github.io, custom domain)
+        if (grid && selectedRepos.length > 0) {
+          grid.innerHTML = selectedRepos.map(repo => {
             const hasLiveDomain = repo.homepage && (repo.homepage.startsWith('http://') || repo.homepage.startsWith('https://')) && repo.homepage.length > 10;
             const visitBtnHtml = hasLiveDomain 
               ? `<a href="${repo.homepage}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">VISIT WEBSITE ↗</a>` 
@@ -124,13 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="feature-head">
                   <div class="feature-badge">
                     <span class="dot"></span>
-                    ${repo.language ? repo.language.toUpperCase() : 'REPOSITORY'}
+                    ${repo.language ? repo.language.toUpperCase() : 'CURATED REPO'}
                   </div>
                   <span class="feature-year">UPDATED ${new Date(repo.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                 </div>
                 <div class="feature-headline">
                   <h3 class="feature-title">${repo.name}</h3>
-                  <p class="feature-pitch">${repo.description || 'Public GitHub repository by FS Neloy.'}</p>
+                  <p class="feature-pitch">${repo.description || 'Selective production project by FS Neloy.'}</p>
                 </div>
                 <div class="feature-stack">
                   <span>⭐ ${repo.stargazers_count} Stars</span>
@@ -147,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } catch (err) {
-      console.warn('GitHub API fetch fallback engaged:', err);
+      console.warn('GitHub API selective fetch fallback engaged:', err);
     }
   }
   fetchGitHubData();
