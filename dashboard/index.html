@@ -124,10 +124,10 @@
 
     .auth-input, .auth-select, .auth-textarea {
       width: 100%;
-      padding: 14px 18px;
+      padding: 12px 16px;
       background: rgba(0, 0, 0, 0.5);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 10px;
       color: var(--text);
       font-family: var(--font-mono);
       font-size: 13px;
@@ -399,6 +399,7 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
+      position: relative;
     }
 
     .pm-header {
@@ -447,6 +448,9 @@
       font-size: 10px;
       color: var(--text-secondary);
       letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .toggle-row {
@@ -500,10 +504,58 @@
       background-color: #000;
     }
 
+    /* Action Buttons Row with Save & Edit Icons */
+    .card-actions-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-card-save {
+      flex: 1;
+      padding: 9px 14px;
+      background: var(--accent);
+      color: #000;
+      border: 0;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.2s;
+    }
+
+    .btn-card-save:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-card-edit {
+      padding: 9px 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.2s;
+    }
+
+    .btn-card-edit:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
     /* 1-Click Remove Button */
     .btn-remove-pm {
-      width: 100%;
-      padding: 8px 12px;
+      padding: 9px 12px;
       background: rgba(255, 95, 95, 0.1);
       border: 1px solid rgba(255, 95, 95, 0.3);
       border-radius: 6px;
@@ -512,6 +564,9 @@
       font-size: 11px;
       font-weight: 600;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
       transition: background 0.2s;
     }
 
@@ -567,6 +622,9 @@
       color: var(--text-secondary);
       letter-spacing: 0.06em;
       text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
   </style>
 </head>
@@ -607,22 +665,22 @@
         </div>
 
         <div>
-          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">REPO NAME OR TITLE *</label>
+          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">✏️ REPO NAME OR TITLE *</label>
           <input type="text" id="importRepoInput" class="auth-input" placeholder="e.g. Mail-Nova---An-Email-Marketing-Agency" required />
         </div>
 
         <div>
-          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">BADGE / CATEGORY</label>
+          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">✏️ BADGE / CATEGORY</label>
           <input type="text" id="importBadgeInput" class="auth-input" placeholder="e.g. SAAS PLATFORM / AI TOOL" value="FEATURED REPO" />
         </div>
 
         <div>
-          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">ADD / EDIT LIVE WEBSITE DOMAIN URL (OPTIONAL)</label>
+          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">🌐 LIVE WEBSITE DOMAIN URL (OPTIONAL)</label>
           <input type="url" id="importLiveUrlInput" class="auth-input" placeholder="https://my-app.vercel.app or custom domain" />
         </div>
 
         <div style="display: flex; gap: 12px; margin-top: 10px;">
-          <button type="submit" class="auth-btn" style="flex: 1;">SAVE &amp; IMPORT →</button>
+          <button type="submit" class="auth-btn" style="flex: 1;">💾 SAVE &amp; IMPORT →</button>
           <button type="button" id="closeImportBtn" class="auth-btn" style="background: #333; color: #fff;">CANCEL</button>
         </div>
       </form>
@@ -635,7 +693,7 @@
       <div class="admin-brand">
         <span>FS NELOY</span>
         <span class="admin-brand-badge">CONTROL SUITE V2.0</span>
-        <span class="save-status-pill" id="saveStatusPill">✓ Live Auto-Saved</span>
+        <span class="save-status-pill" id="saveStatusPill">💾 Live Auto-Saved</span>
       </div>
       <div class="admin-header-actions">
         <a href="https://fs-neloy.vercel.app" target="_blank" class="btn-header btn-site">VIEW LIVE SITE ↗</a>
@@ -686,7 +744,7 @@
         </div>
 
         <div class="project-grid" id="adminProjectGrid">
-          <!-- Initial 4 Default Cards if no saved projects -->
+          <!-- Cards with Save & Edit icons dynamically rendered -->
         </div>
       </div>
 
@@ -716,54 +774,54 @@
         <form id="identityForm" class="pm-card" style="gap: 24px;">
           <div class="identity-form-grid">
             <div class="form-group">
-              <label class="form-label">FULL NAME / BRAND TITLE *</label>
+              <label class="form-label">✏️ FULL NAME / BRAND TITLE *</label>
               <input type="text" id="profNameInput" class="auth-input" value="FS Neloy" required />
             </div>
             
             <div class="form-group">
-              <label class="form-label">PROFESSIONAL TITLE / ROLE *</label>
+              <label class="form-label">✏️ PROFESSIONAL TITLE / ROLE *</label>
               <input type="text" id="profTitleInput" class="auth-input" value="Full Stack Web Developer (AI Assisted)" required />
             </div>
 
             <div class="form-group">
-              <label class="form-label">CURRENT AVAILABILITY BADGE *</label>
+              <label class="form-label">✏️ CURRENT AVAILABILITY BADGE *</label>
               <input type="text" id="profStatusInput" class="auth-input" value="AVAILABLE FOR CONTRACTS &amp; ROLES" required />
             </div>
 
             <div class="form-group">
-              <label class="form-label">CONTACT EMAIL *</label>
+              <label class="form-label">✏️ CONTACT EMAIL *</label>
               <input type="email" id="profEmailInput" class="auth-input" value="seyasbro@gmail.com" required />
             </div>
 
             <div class="form-group">
-              <label class="form-label">GITHUB HANDLE *</label>
+              <label class="form-label">✏️ GITHUB HANDLE *</label>
               <input type="text" id="profGithubInput" class="auth-input" value="@neloy559" required />
             </div>
 
             <div class="form-group">
-              <label class="form-label">PRIMARY STACK TAGS *</label>
+              <label class="form-label">✏️ PRIMARY STACK TAGS *</label>
               <input type="text" id="profStackInput" class="auth-input" value="TypeScript, Next.js 16, Node.js, MongoDB, Supabase, Tailwind, Python" required />
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">HERO ELEVATOR PITCH / TAGLINE *</label>
+            <label class="form-label">✏️ HERO ELEVATOR PITCH / TAGLINE *</label>
             <textarea id="profTaglineInput" class="auth-textarea" required>Full Stack Web Developer (AI Assisted) architecting modern web apps, SaaS platforms, B2B portals, and automated developer workflows.</textarea>
           </div>
 
           <div class="form-group">
-            <label class="form-label">CURRENTLY BUILDING (NOW CARD) *</label>
+            <label class="form-label">✏️ CURRENTLY BUILDING (NOW CARD) *</label>
             <input type="text" id="profBuildingInput" class="auth-input" value="Building AI-assisted web applications &amp; Next.js 16 e-commerce systems." required />
           </div>
 
           <div class="identity-form-grid">
             <div class="form-group">
-              <label class="form-label">ABOUT SECTION BIO PARAGRAPH 1 *</label>
+              <label class="form-label">✏️ ABOUT SECTION BIO PARAGRAPH 1 *</label>
               <textarea id="profBio1Input" class="auth-textarea" style="min-height: 110px;" required>I am FS Neloy, a Full Stack Web Developer (AI Assisted) focused on creating reliable, high-impact software. My work ranges from multi-tenant SaaS products and B2B platforms to AI-assisted web development pipelines.</textarea>
             </div>
 
             <div class="form-group">
-              <label class="form-label">ABOUT SECTION BIO PARAGRAPH 2 *</label>
+              <label class="form-label">✏️ ABOUT SECTION BIO PARAGRAPH 2 *</label>
               <textarea id="profBio2Input" class="auth-textarea" style="min-height: 110px;" required>I specialize in building performant frontend design systems paired with robust backend services, ensuring every project is clean, responsive, and scalable.</textarea>
             </div>
           </div>
@@ -786,42 +844,42 @@
         <form id="socialsForm" class="pm-card" style="gap: 24px;">
           <div class="identity-form-grid">
             <div class="form-group">
-              <label class="form-label">GITHUB PROFILE URL</label>
+              <label class="form-label">✏️ GITHUB PROFILE URL</label>
               <input type="url" id="socGithubInput" class="auth-input" value="https://github.com/neloy559" placeholder="https://github.com/neloy559" />
             </div>
 
             <div class="form-group">
-              <label class="form-label">LINKEDIN PROFILE URL</label>
+              <label class="form-label">✏️ LINKEDIN PROFILE URL</label>
               <input type="url" id="socLinkedinInput" class="auth-input" placeholder="https://linkedin.com/in/yourname" />
             </div>
 
             <div class="form-group">
-              <label class="form-label">TWITTER / X PROFILE URL</label>
+              <label class="form-label">✏️ TWITTER / X PROFILE URL</label>
               <input type="url" id="socTwitterInput" class="auth-input" placeholder="https://x.com/yourhandle" />
             </div>
 
             <div class="form-group">
-              <label class="form-label">FACEBOOK PROFILE / PAGE URL</label>
+              <label class="form-label">✏️ FACEBOOK PROFILE / PAGE URL</label>
               <input type="url" id="socFacebookInput" class="auth-input" placeholder="https://facebook.com/yourname" />
             </div>
 
             <div class="form-group">
-              <label class="form-label">TELEGRAM / WHATSAPP LINK</label>
+              <label class="form-label">✏️ TELEGRAM / WHATSAPP LINK</label>
               <input type="url" id="socTelegramInput" class="auth-input" placeholder="https://t.me/yourusername" />
             </div>
 
             <div class="form-group">
-              <label class="form-label">DISCORD USERNAME / SERVER LINK</label>
+              <label class="form-label">✏️ DISCORD USERNAME / SERVER LINK</label>
               <input type="text" id="socDiscordInput" class="auth-input" placeholder="neloy#1234 or https://discord.gg/..." />
             </div>
 
             <div class="form-group">
-              <label class="form-label">DEV.TO / MEDIUM / BLOG URL</label>
+              <label class="form-label">✏️ DEV.TO / MEDIUM / BLOG URL</label>
               <input type="url" id="socBlogInput" class="auth-input" placeholder="https://dev.to/yourusername" />
             </div>
 
             <div class="form-group">
-              <label class="form-label">YOUTUBE CHANNEL URL</label>
+              <label class="form-label">✏️ YOUTUBE CHANNEL URL</label>
               <input type="url" id="socYoutubeInput" class="auth-input" placeholder="https://youtube.com/@yourchannel" />
             </div>
           </div>
@@ -909,11 +967,16 @@
         const projectsList = [];
 
         cards.forEach(card => {
-          const name = card.getAttribute('data-title') || card.querySelector('.pm-title')?.textContent || '';
-          const badge = card.querySelector('.pm-badge')?.textContent || 'FEATURED REPO';
-          const pitch = card.querySelector('.pm-pitch')?.textContent || '';
+          const nameInput = card.querySelector('.title-input');
+          const badgeInput = card.querySelector('.badge-input');
+          const pitchInput = card.querySelector('.pitch-input');
           const domainUrlInput = card.querySelector('.domain-url-input');
+
+          const name = nameInput ? nameInput.value.trim() : (card.getAttribute('data-title') || '');
+          const badge = badgeInput ? badgeInput.value.trim() : 'FEATURED REPO';
+          const pitch = pitchInput ? pitchInput.value.trim() : '';
           const domainUrl = domainUrlInput ? domainUrlInput.value.trim() : '';
+
           const toggleInput = card.querySelector('.toggle-switch input');
           const showVisitBtn = toggleInput ? toggleInput.checked : false;
 
@@ -953,8 +1016,8 @@
 
       function triggerSaveNotice() {
         if (saveStatusPill) {
-          saveStatusPill.textContent = '✓ Live Auto-Saved!';
-          setTimeout(() => saveStatusPill.textContent = '✓ Live Auto-Saved', 2000);
+          saveStatusPill.textContent = '💾 Live Auto-Saved!';
+          setTimeout(() => saveStatusPill.textContent = '💾 Live Auto-Saved', 2000);
         }
       }
 
@@ -970,9 +1033,23 @@
           <div class="pm-card" data-title="${proj.name}">
             <div class="pm-header">
               <span class="pm-badge">${(proj.badge || 'FEATURED REPO').toUpperCase()}</span>
+              <span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent);">✏️ EDITABLE</span>
             </div>
-            <h3 class="pm-title">${proj.name}</h3>
-            <p class="pm-pitch">${proj.pitch || 'Curated production repository.'}</p>
+            
+            <div class="form-group">
+              <label class="domain-url-label">✏️ TITLE</label>
+              <input type="text" class="title-input auth-input" value="${proj.name}" style="padding: 8px 12px; font-weight: 700; font-size: 14px;" />
+            </div>
+
+            <div class="form-group">
+              <label class="domain-url-label">✏️ BADGE / CATEGORY</label>
+              <input type="text" class="badge-input auth-input" value="${proj.badge || 'FEATURED REPO'}" style="padding: 6px 10px; font-size: 11px;" />
+            </div>
+
+            <div class="form-group">
+              <label class="domain-url-label">✏️ PITCH / DESCRIPTION</label>
+              <input type="text" class="pitch-input auth-input" value="${proj.pitch || ''}" style="padding: 8px 12px; font-size: 12px;" />
+            </div>
 
             <div class="pm-controls">
               <div class="domain-url-group">
@@ -987,7 +1064,11 @@
                   <span class="slider"></span>
                 </label>
               </div>
-              <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
+
+              <div class="card-actions-row">
+                <button type="button" class="btn-card-save">💾 SAVE CHANGES</button>
+                <button type="button" class="btn-remove-pm">🗑️ REMOVE</button>
+              </div>
             </div>
           </div>
         `).join('');
@@ -997,9 +1078,25 @@
       }
 
       function bindCardEvents() {
-        // Domain URL Input Live Auto-Save
-        document.querySelectorAll('.domain-url-input').forEach(input => {
+        // Live input listeners for title, badge, pitch, domain-url
+        document.querySelectorAll('.title-input, .badge-input, .pitch-input, .domain-url-input').forEach(input => {
           input.oninput = () => saveProjectsState();
+        });
+
+        // Save Button Click Listener with visual feedback
+        document.querySelectorAll('.btn-card-save').forEach(btn => {
+          btn.onclick = (e) => {
+            saveProjectsState();
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '✓ SAVED LIVE!';
+            btn.style.background = '#4CAF50';
+            btn.style.color = '#fff';
+            setTimeout(() => {
+              btn.innerHTML = originalText;
+              btn.style.background = 'var(--accent)';
+              btn.style.color = '#000';
+            }, 1800);
+          };
         });
 
         // Toggle Listener
@@ -1011,7 +1108,8 @@
         document.querySelectorAll('.btn-remove-pm').forEach(btn => {
           btn.onclick = (e) => {
             const card = e.target.closest('.pm-card');
-            const title = card?.getAttribute('data-title') || 'this project';
+            const titleInput = card?.querySelector('.title-input');
+            const title = titleInput ? titleInput.value : 'this project';
             if (confirm(`Are you sure you want to remove "${title}" from your featured portfolio list?`)) {
               card.remove();
               saveProjectsState();
@@ -1165,6 +1263,10 @@
                           <span class="slider"></span>
                         </label>
                       </div>
+
+                      <div class="card-actions-row">
+                        <button type="button" class="btn-card-save btn-recent-save">💾 SAVE DOMAIN &amp; STATUS</button>
+                      </div>
                     </div>
                   </div>
                 `;
@@ -1174,6 +1276,20 @@
               recentGrid.querySelectorAll('.recent-toggle, .recent-domain-input').forEach(elem => {
                 elem.oninput = () => saveRecentCustomState();
                 elem.onchange = () => saveRecentCustomState();
+              });
+
+              recentGrid.querySelectorAll('.btn-recent-save').forEach(btn => {
+                btn.onclick = () => {
+                  saveRecentCustomState();
+                  btn.innerHTML = '✓ SAVED!';
+                  btn.style.background = '#4CAF50';
+                  btn.style.color = '#fff';
+                  setTimeout(() => {
+                    btn.innerHTML = '💾 SAVE DOMAIN & STATUS';
+                    btn.style.background = 'var(--accent)';
+                    btn.style.color = '#000';
+                  }, 1800);
+                };
               });
             }
           }
@@ -1223,9 +1339,23 @@
             <div class="pm-card" data-title="${repoName}">
               <div class="pm-header">
                 <span class="pm-badge">${badge.toUpperCase()}</span>
+                <span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent);">✏️ EDITABLE</span>
               </div>
-              <h3 class="pm-title">${repoName}</h3>
-              <p class="pm-pitch">Newly imported repository from @neloy559.</p>
+
+              <div class="form-group">
+                <label class="domain-url-label">✏️ TITLE</label>
+                <input type="text" class="title-input auth-input" value="${repoName}" style="padding: 8px 12px; font-weight: 700; font-size: 14px;" />
+              </div>
+
+              <div class="form-group">
+                <label class="domain-url-label">✏️ BADGE / CATEGORY</label>
+                <input type="text" class="badge-input auth-input" value="${badge.toUpperCase()}" style="padding: 6px 10px; font-size: 11px;" />
+              </div>
+
+              <div class="form-group">
+                <label class="domain-url-label">✏️ PITCH / DESCRIPTION</label>
+                <input type="text" class="pitch-input auth-input" value="Newly imported repository from @neloy559." style="padding: 8px 12px; font-size: 12px;" />
+              </div>
 
               <div class="pm-controls">
                 <div class="domain-url-group">
@@ -1240,7 +1370,11 @@
                     <span class="slider"></span>
                   </label>
                 </div>
-                <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
+
+                <div class="card-actions-row">
+                  <button type="button" class="btn-card-save">💾 SAVE CHANGES</button>
+                  <button type="button" class="btn-remove-pm">🗑️ REMOVE</button>
+                </div>
               </div>
             </div>
           `;
