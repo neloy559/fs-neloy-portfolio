@@ -122,7 +122,7 @@
       margin-top: 10px;
     }
 
-    .auth-input, .auth-select {
+    .auth-input, .auth-select, .auth-textarea {
       width: 100%;
       padding: 14px 18px;
       background: rgba(0, 0, 0, 0.5);
@@ -130,9 +130,15 @@
       border-radius: 12px;
       color: var(--text);
       font-family: var(--font-mono);
-      font-size: 14px;
+      font-size: 13px;
       outline: none;
       transition: border-color 0.2s;
+    }
+
+    .auth-textarea {
+      min-height: 90px;
+      resize: vertical;
+      line-height: 1.5;
     }
 
     .auth-select option {
@@ -140,7 +146,7 @@
       color: var(--text);
     }
 
-    .auth-input:focus, .auth-select:focus {
+    .auth-input:focus, .auth-select:focus, .auth-textarea:focus {
       border-color: var(--accent);
     }
 
@@ -528,6 +534,27 @@
       flex-direction: column;
       gap: 20px;
     }
+
+    /* Identity Form Layout */
+    .identity-form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 24px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
   </style>
 </head>
 <body>
@@ -623,7 +650,7 @@
         </div>
         <div class="stat-card">
           <span class="stat-lbl">CURRENT STATUS</span>
-          <span class="stat-val" style="font-size: 15px; margin-top: 6px;">Available for Contracts</span>
+          <span class="stat-val" id="dashStatusBadge" style="font-size: 15px; margin-top: 6px;">Available for Contracts</span>
           <span class="stat-sub">Full Stack &amp; SaaS Systems</span>
         </div>
       </div>
@@ -632,7 +659,7 @@
       <div class="admin-tabs">
         <button class="tab-btn active" data-tab="tabProjects">⚡ FEATURED PROJECTS CONTROLLER</button>
         <button class="tab-btn" data-tab="tabRecent">📡 RECENT ACTIVITY &amp; FEED HIDER</button>
-        <button class="tab-btn" data-tab="tabProfile">👤 PROFILE &amp; HERO BIO</button>
+        <button class="tab-btn" data-tab="tabProfile">👤 DEVELOPER IDENTITY &amp; BIO EDITOR</button>
       </div>
 
       <!-- Tab 1: Featured Projects Manager -->
@@ -663,19 +690,74 @@
         </div>
       </div>
 
-      <!-- Tab 3: Profile Settings -->
+      <!-- Tab 3: Curated Industry-Standard Profile & Bio Editor -->
       <div class="tab-content" id="tabProfile">
-        <div class="section-title">
-          <span>//</span> IDENTITY &amp; HERO BIO EDITOR
-        </div>
-        <div class="pm-card" style="max-width: 600px;">
-          <h3 class="pm-title">FS Neloy Profile</h3>
-          <p class="pm-pitch">Full Stack Web Developer (AI Assisted) — specialized in Next.js 16, TypeScript, Python, and B2B SaaS Systems.</p>
-          <div style="font-family: var(--font-mono); font-size: 13px; color: var(--text-secondary); margin-top: 10px;">
-            Email: seyasbro@gmail.com<br />
-            GitHub: @neloy559
+        <div class="section-title-row">
+          <div class="section-title">
+            <span>//</span> DEVELOPER IDENTITY &amp; HERO BIO TEMPLATE
           </div>
+          <span style="font-family: var(--font-mono); font-size: 12px; color: var(--accent);">Silicon Valley / Industry Standard Profile Schema</span>
         </div>
+
+        <form id="identityForm" class="pm-card" style="gap: 24px;">
+          <div class="identity-form-grid">
+            <div class="form-group">
+              <label class="form-label">FULL NAME / BRAND TITLE *</label>
+              <input type="text" id="profNameInput" class="auth-input" value="FS Neloy" required />
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">PROFESSIONAL TITLE / ROLE *</label>
+              <input type="text" id="profTitleInput" class="auth-input" value="Full Stack Web Developer (AI Assisted)" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">CURRENT AVAILABILITY BADGE *</label>
+              <input type="text" id="profStatusInput" class="auth-input" value="AVAILABLE FOR CONTRACTS &amp; ROLES" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">CONTACT EMAIL *</label>
+              <input type="email" id="profEmailInput" class="auth-input" value="seyasbro@gmail.com" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">GITHUB HANDLE *</label>
+              <input type="text" id="profGithubInput" class="auth-input" value="@neloy559" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">PRIMARY STACK TAGS *</label>
+              <input type="text" id="profStackInput" class="auth-input" value="TypeScript, Next.js 16, Node.js, MongoDB, Supabase, Tailwind, Python" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">HERO ELEVATOR PITCH / TAGLINE *</label>
+            <textarea id="profTaglineInput" class="auth-textarea" required>Full Stack Web Developer (AI Assisted) architecting modern web apps, SaaS platforms, B2B portals, and automated developer workflows.</textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">CURRENTLY BUILDING (NOW CARD) *</label>
+            <input type="text" id="profBuildingInput" class="auth-input" value="Building AI-assisted web applications &amp; Next.js 16 e-commerce systems." required />
+          </div>
+
+          <div class="identity-form-grid">
+            <div class="form-group">
+              <label class="form-label">ABOUT SECTION BIO PARAGRAPH 1 *</label>
+              <textarea id="profBio1Input" class="auth-textarea" style="min-height: 110px;" required>I am FS Neloy, a Full Stack Web Developer (AI Assisted) focused on creating reliable, high-impact software. My work ranges from multi-tenant SaaS products and B2B platforms to AI-assisted web development pipelines.</textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">ABOUT SECTION BIO PARAGRAPH 2 *</label>
+              <textarea id="profBio2Input" class="auth-textarea" style="min-height: 110px;" required>I specialize in building performant frontend design systems paired with robust backend services, ensuring every project is clean, responsive, and scalable.</textarea>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 16px; margin-top: 10px;">
+            <button type="submit" class="auth-btn" style="flex: 1; font-size: 13px;">💾 SAVE DEVELOPER IDENTITY &amp; BIO →</button>
+          </div>
+        </form>
       </div>
     </main>
   </div>
@@ -694,6 +776,7 @@
       const SESSION_KEY = "fs_neloy_admin_authenticated";
       const STORAGE_KEY = "fs_neloy_curated_projects";
       const HIDDEN_RECENT_KEY = "fs_neloy_hidden_recent_repos";
+      const PROFILE_KEY = "fs_neloy_profile_data";
 
       const DEFAULT_PROJECTS = [
         { name: 'LeadScraper Pro', badge: 'SAAS PLATFORM', pitch: 'No-AI BYODB Lead Scraping & Outreach SaaS Platform designed for high-conversion lead generation.', homepage: '', showVisitBtn: false },
@@ -710,6 +793,7 @@
         sessionStorage.setItem(SESSION_KEY, "true");
         fetchLiveGithubRepos();
         renderAdminProjects();
+        loadProfileForm();
       }
 
       function lockDashboard() {
@@ -852,6 +936,56 @@
         const total = grid.querySelectorAll('.pm-card').length;
         statRepoCount.textContent = total;
       }
+
+      // Profile & Bio Editor Logic
+      const identityForm = document.getElementById('identityForm');
+      function loadProfileForm() {
+        const savedProf = localStorage.getItem(PROFILE_KEY);
+        if (!savedProf) return;
+
+        try {
+          const p = JSON.parse(savedProf);
+          if (p.name) document.getElementById('profNameInput').value = p.name;
+          if (p.title) document.getElementById('profTitleInput').value = p.title;
+          if (p.status) {
+            document.getElementById('profStatusInput').value = p.status;
+            const dashStatusBadge = document.getElementById('dashStatusBadge');
+            if (dashStatusBadge) dashStatusBadge.textContent = p.status;
+          }
+          if (p.email) document.getElementById('profEmailInput').value = p.email;
+          if (p.github) document.getElementById('profGithubInput').value = p.github;
+          if (p.stack) document.getElementById('profStackInput').value = p.stack;
+          if (p.tagline) document.getElementById('profTaglineInput').value = p.tagline;
+          if (p.building) document.getElementById('profBuildingInput').value = p.building;
+          if (p.bio1) document.getElementById('profBio1Input').value = p.bio1;
+          if (p.bio2) document.getElementById('profBio2Input').value = p.bio2;
+        } catch (e) {
+          console.warn('Profile parse fallback:', e);
+        }
+      }
+
+      identityForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const profileData = {
+          name: document.getElementById('profNameInput')?.value.trim(),
+          title: document.getElementById('profTitleInput')?.value.trim(),
+          status: document.getElementById('profStatusInput')?.value.trim(),
+          email: document.getElementById('profEmailInput')?.value.trim(),
+          github: document.getElementById('profGithubInput')?.value.trim(),
+          stack: document.getElementById('profStackInput')?.value.trim(),
+          tagline: document.getElementById('profTaglineInput')?.value.trim(),
+          building: document.getElementById('profBuildingInput')?.value.trim(),
+          bio1: document.getElementById('profBio1Input')?.value.trim(),
+          bio2: document.getElementById('profBio2Input')?.value.trim()
+        };
+
+        localStorage.setItem(PROFILE_KEY, JSON.stringify(profileData));
+        const dashStatusBadge = document.getElementById('dashStatusBadge');
+        if (dashStatusBadge && profileData.status) dashStatusBadge.textContent = profileData.status;
+
+        triggerSaveNotice();
+        alert('✓ Developer Identity & Bio updated! Your portfolio has auto-updated live.');
+      });
 
       // Fetch Live GitHub Repositories for Picker Dropdown and Recent Activity Feed Hider
       async function fetchLiveGithubRepos() {

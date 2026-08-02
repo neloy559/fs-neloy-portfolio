@@ -1,4 +1,43 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // 0. Dynamic Developer Identity & Bio Sync Bridge
+  const PROFILE_KEY = "fs_neloy_profile_data";
+  function applyProfileData() {
+    const savedProf = localStorage.getItem(PROFILE_KEY);
+    if (!savedProf) return;
+
+    try {
+      const p = JSON.parse(savedProf);
+      
+      const heroAvailabilityText = document.getElementById('heroAvailabilityText');
+      const heroTagline = document.getElementById('heroTagline');
+      const nowBody = document.getElementById('nowBody');
+      const aboutHeadingName = document.getElementById('aboutHeadingName');
+      const aboutEyebrow = document.getElementById('aboutEyebrow');
+      const aboutEmail = document.getElementById('aboutEmail');
+      const aboutGithub = document.getElementById('aboutGithub');
+      const aboutStack = document.getElementById('aboutStack');
+      const aboutProseP1 = document.getElementById('aboutProseP1');
+      const aboutProseP2 = document.getElementById('aboutProseP2');
+
+      if (heroAvailabilityText && p.status) heroAvailabilityText.textContent = p.status.toUpperCase();
+      if (heroTagline && p.tagline) heroTagline.textContent = p.tagline;
+      if (nowBody && p.building) nowBody.textContent = p.building;
+      if (aboutHeadingName && p.name) aboutHeadingName.textContent = p.name.toUpperCase();
+      if (aboutEyebrow && p.title) aboutEyebrow.textContent = p.title.toUpperCase();
+      if (aboutEmail && p.email) aboutEmail.textContent = p.email;
+      if (aboutGithub && p.github) {
+        aboutGithub.textContent = p.github.startsWith('@') ? p.github : `@${p.github}`;
+        aboutGithub.href = `https://github.com/${p.github.replace('@', '')}`;
+      }
+      if (aboutStack && p.stack) aboutStack.textContent = p.stack;
+      if (aboutProseP1 && p.bio1) aboutProseP1.textContent = p.bio1;
+      if (aboutProseP2 && p.bio2) aboutProseP2.textContent = p.bio2;
+    } catch (e) {
+      console.warn('Profile sync fallback:', e);
+    }
+  }
+  applyProfileData();
+
   // 1. Live Digital Clock
   const clockEl = document.getElementById('liveClock');
   
