@@ -390,7 +390,7 @@
     .pm-controls {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
       margin-top: auto;
       padding-top: 16px;
       border-top: 1px solid var(--border);
@@ -445,6 +445,25 @@
     input:checked + .slider:before {
       transform: translateX(20px);
       background-color: #000;
+    }
+
+    /* 1-Click Remove Button */
+    .btn-remove-pm {
+      width: 100%;
+      padding: 8px 12px;
+      background: rgba(255, 95, 95, 0.1);
+      border: 1px solid rgba(255, 95, 95, 0.3);
+      border-radius: 6px;
+      color: #ff7b7b;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-remove-pm:hover {
+      background: rgba(255, 95, 95, 0.25);
     }
 
     /* Import Modal */
@@ -590,7 +609,7 @@
 
         <div class="project-grid" id="adminProjectGrid">
           <!-- LeadScraper Pro -->
-          <div class="pm-card">
+          <div class="pm-card" data-title="LeadScraper Pro">
             <div class="pm-header">
               <span class="pm-badge">SAAS PLATFORM</span>
             </div>
@@ -604,11 +623,12 @@
                   <span class="slider"></span>
                 </label>
               </div>
+              <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
             </div>
           </div>
 
           <!-- Rupnogor E-Commerce -->
-          <div class="pm-card">
+          <div class="pm-card" data-title="Rupnogor E-Commerce">
             <div class="pm-header">
               <span class="pm-badge">FASHION E-COMMERCE</span>
             </div>
@@ -622,11 +642,12 @@
                   <span class="slider"></span>
                 </label>
               </div>
+              <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
             </div>
           </div>
 
           <!-- OCR Tools -->
-          <div class="pm-card">
+          <div class="pm-card" data-title="OCR Tools Platform">
             <div class="pm-header">
               <span class="pm-badge">AI / OCR</span>
             </div>
@@ -640,11 +661,12 @@
                   <span class="slider"></span>
                 </label>
               </div>
+              <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
             </div>
           </div>
 
           <!-- Badol Tyre Ghar -->
-          <div class="pm-card">
+          <div class="pm-card" data-title="Badol Tyre Ghar V4">
             <div class="pm-header">
               <span class="pm-badge">B2B ENTERPRISE</span>
             </div>
@@ -658,6 +680,7 @@
                   <span class="slider"></span>
                 </label>
               </div>
+              <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
             </div>
           </div>
         </div>
@@ -754,6 +777,12 @@
       openImportBtn?.addEventListener('click', () => importModal?.classList.add('active'));
       closeImportBtn?.addEventListener('click', () => importModal?.classList.remove('active'));
 
+      function updateRepoCounter() {
+        if (!adminProjectGrid || !statRepoCount) return;
+        const total = adminProjectGrid.querySelectorAll('.pm-card').length;
+        statRepoCount.textContent = total;
+      }
+
       importForm?.addEventListener('submit', (e) => {
         e.preventDefault();
         const repoName = document.getElementById('importRepoInput')?.value.trim();
@@ -762,7 +791,7 @@
 
         if (repoName) {
           const cardHtml = `
-            <div class="pm-card">
+            <div class="pm-card" data-title="${repoName}">
               <div class="pm-header">
                 <span class="pm-badge">${badge.toUpperCase()}</span>
               </div>
@@ -776,19 +805,33 @@
                     <span class="slider"></span>
                   </label>
                 </div>
+                <button type="button" class="btn-remove-pm">🗑️ REMOVE PROJECT</button>
               </div>
             </div>
           `;
           adminProjectGrid?.insertAdjacentHTML('afterbegin', cardHtml);
-          if (statRepoCount) {
-            const curr = parseInt(statRepoCount.textContent || '4', 10);
-            statRepoCount.textContent = curr + 1;
-          }
+          updateRepoCounter();
           importForm.reset();
           importModal?.classList.remove('active');
+          bindRemoveButtons();
           alert(`✓ Successfully imported ${repoName} into your portfolio control suite!`);
         }
       });
+
+      // 1-Click Remove Button Event Delegation
+      function bindRemoveButtons() {
+        document.querySelectorAll('.btn-remove-pm').forEach(btn => {
+          btn.onclick = (e) => {
+            const card = e.target.closest('.pm-card');
+            const title = card?.getAttribute('data-title') || 'this project';
+            if (confirm(`Are you sure you want to remove "${title}" from your featured portfolio list?`)) {
+              card.remove();
+              updateRepoCounter();
+            }
+          };
+        });
+      }
+      bindRemoveButtons();
 
       // Tabs Switcher
       const tabBtns = document.querySelectorAll('.tab-btn');
