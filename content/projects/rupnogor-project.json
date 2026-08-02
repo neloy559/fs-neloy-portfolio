@@ -1,0 +1,14 @@
+{
+  "title": "Rupnogor E-Commerce",
+  "badge": "FASHION E-COMMERCE",
+  "pitch": "Premium Bangladeshi fashion e-commerce — sarees, fusion wear, and handcrafted jewelry.",
+  "points": [
+    "Powered by Next.js 16, MongoDB Atlas, Supabase Auth, and TypeScript.",
+    "High-conversion shopping experience with custom cart management and authentication."
+  ],
+  "stack": ["Next.js 16", "TypeScript", "MongoDB Atlas", "Supabase Auth"],
+  "repositoryUrl": "https://github.com/neloy559/rupnogor-project",
+  "liveWebsiteUrl": "https://rupnogor-project.vercel.app",
+  "showLiveWebsiteBtn": true,
+  "order": 2
+}

@@ -1,0 +1,14 @@
+{
+  "title": "LeadScraper Pro",
+  "badge": "SAAS PLATFORM",
+  "pitch": "No-AI BYODB Lead Scraping & Outreach SaaS Platform designed for high-conversion lead generation.",
+  "points": [
+    "Automated lead extraction, dataset organization, and outbound messaging integration.",
+    "Built with TypeScript, Next.js, and custom database connectors."
+  ],
+  "stack": ["TypeScript", "Next.js", "Node.js", "SaaS Engine"],
+  "repositoryUrl": "https://github.com/neloy559/leadscraper-pro",
+  "liveWebsiteUrl": "",
+  "showLiveWebsiteBtn": false,
+  "order": 1
+}

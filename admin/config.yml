@@ -1,0 +1,40 @@
+backend:
+  name: github
+  repo: neloy559/fs-neloy-portfolio
+  branch: main
+  site_domain: fs-neloy-portfolio.vercel.app
+
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+collections:
+  - name: "projects"
+    label: "Curated Projects"
+    folder: "content/projects"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Project Title", name: "title", widget: "string" }
+      - { label: "Category / Badge", name: "badge", widget: "string", default: "SAAS PLATFORM" }
+      - { label: "Pitch / One-Liner Description", name: "pitch", widget: "text" }
+      - { label: "Featured Bullet Points", name: "points", widget: "list" }
+      - { label: "Tech Stack Tags", name: "stack", widget: "list" }
+      - { label: "GitHub Repository URL", name: "repositoryUrl", widget: "string" }
+      - { label: "Live Website URL", name: "liveWebsiteUrl", widget: "string", required: false }
+      - { label: "Show Visit Website CTA Button?", name: "showLiveWebsiteBtn", widget: "boolean", default: true }
+      - { label: "Display Order Priority", name: "order", widget: "number", default: 1 }
+
+  - name: "settings"
+    label: "Site Settings & Bio"
+    files:
+      - file: "content/settings/general.json"
+        label: "General Profile Settings"
+        name: "general"
+        fields:
+          - { label: "Full Name", name: "name", widget: "string", default: "FS Neloy" }
+          - { label: "Professional Title", name: "title", widget: "string", default: "Full Stack Web Developer (AI Assisted)" }
+          - { label: "Hero Tagline", name: "heroTagline", widget: "text" }
+          - { label: "Hero Paragraph", name: "heroParagraph", widget: "text" }
+          - { label: "Currently Building Status", name: "currentlyBuilding", widget: "string" }
+          - { label: "Contact Email", name: "contactEmail", widget: "string", default: "seyasbro@gmail.com" }
+          - { label: "GitHub Profile Username", name: "githubUser", widget: "string", default: "neloy559" }
