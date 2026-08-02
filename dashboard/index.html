@@ -387,7 +387,7 @@
     /* Project Cards Manager Grid */
     .project-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
       gap: 24px;
     }
 
@@ -434,6 +434,19 @@
       margin-top: auto;
       padding-top: 16px;
       border-top: 1px solid var(--border);
+    }
+
+    .domain-url-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .domain-url-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-secondary);
+      letter-spacing: 0.06em;
     }
 
     .toggle-row {
@@ -604,8 +617,8 @@
         </div>
 
         <div>
-          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">LIVE WEBSITE URL (OPTIONAL)</label>
-          <input type="url" id="importLiveUrlInput" class="auth-input" placeholder="https://my-app.vercel.app" />
+          <label style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">ADD / EDIT LIVE WEBSITE DOMAIN URL (OPTIONAL)</label>
+          <input type="url" id="importLiveUrlInput" class="auth-input" placeholder="https://my-app.vercel.app or custom domain" />
         </div>
 
         <div style="display: flex; gap: 12px; margin-top: 10px;">
@@ -657,7 +670,7 @@
 
       <!-- Navigation Tabs -->
       <div class="admin-tabs">
-        <button class="tab-btn active" data-tab="tabProjects">⚡ FEATURED PROJECTS CONTROLLER</button>
+        <button class="tab-btn active" data-tab="tabProjects">⚡ FEATURED PROJECTS &amp; DOMAINS</button>
         <button class="tab-btn" data-tab="tabRecent">📡 RECENT ACTIVITY &amp; FEED HIDER</button>
         <button class="tab-btn" data-tab="tabProfile">👤 IDENTITY &amp; BIO EDITOR</button>
         <button class="tab-btn" data-tab="tabSocials">🌐 SOCIAL MEDIA &amp; WEB HANDLES</button>
@@ -667,7 +680,7 @@
       <div class="tab-content active" id="tabProjects">
         <div class="section-title-row">
           <div class="section-title">
-            <span>//</span> FEATURED PROJECTS &amp; 1-CLICK CONTROLLER
+            <span>//</span> FEATURED PROJECTS &amp; DOMAIN URL CONTROLLER
           </div>
           <button type="button" id="openImportBtn" class="btn-import">➕ IMPORT NEW PROJECT</button>
         </div>
@@ -681,9 +694,9 @@
       <div class="tab-content" id="tabRecent">
         <div class="section-title-row">
           <div class="section-title">
-            <span>//</span> RECENT ACTIVITY FEED CONTROLLER
+            <span>//</span> RECENT ACTIVITY FEED &amp; DOMAINS CONTROLLER
           </div>
-          <span style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">Toggle ON/OFF to show or hide repos from your Recent Activity section</span>
+          <span style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">Toggle ON/OFF or add custom domain URLs for recent projects</span>
         </div>
 
         <div class="project-grid" id="adminRecentGrid">
@@ -834,7 +847,7 @@
       const MASTER_PASS = "neloy@portfolio.com";
       const SESSION_KEY = "fs_neloy_admin_authenticated";
       const STORAGE_KEY = "fs_neloy_curated_projects";
-      const HIDDEN_RECENT_KEY = "fs_neloy_hidden_recent_repos";
+      const RECENT_CUSTOM_KEY = "fs_neloy_recent_custom_data";
       const PROFILE_KEY = "fs_neloy_profile_data";
       const SOCIALS_KEY = "fs_neloy_socials_data";
 
@@ -899,13 +912,14 @@
           const name = card.getAttribute('data-title') || card.querySelector('.pm-title')?.textContent || '';
           const badge = card.querySelector('.pm-badge')?.textContent || 'FEATURED REPO';
           const pitch = card.querySelector('.pm-pitch')?.textContent || '';
+          const domainUrlInput = card.querySelector('.domain-url-input');
+          const domainUrl = domainUrlInput ? domainUrlInput.value.trim() : '';
           const toggleInput = card.querySelector('.toggle-switch input');
           const showVisitBtn = toggleInput ? toggleInput.checked : false;
-          const liveUrl = card.getAttribute('data-live-url') || (showVisitBtn ? 'https://rupnogor-project.vercel.app' : '');
 
           if (name) {
             projectsList.push({
-              name, badge, pitch, homepage: liveUrl, showVisitBtn
+              name, badge, pitch, homepage: domainUrl, showVisitBtn
             });
           }
         });
@@ -915,20 +929,25 @@
         triggerSaveNotice();
       }
 
-      function saveHiddenRecentState() {
+      function saveRecentCustomState() {
         const grid = document.getElementById('adminRecentGrid');
         if (!grid) return;
 
-        const hiddenRepos = [];
+        const recentCustomMap = {};
         grid.querySelectorAll('.pm-card').forEach(card => {
           const repoName = card.getAttribute('data-repo-name');
           const toggle = card.querySelector('.recent-toggle');
-          if (repoName && toggle && !toggle.checked) {
-            hiddenRepos.push(repoName.toLowerCase());
+          const domainInput = card.querySelector('.recent-domain-input');
+          
+          if (repoName) {
+            recentCustomMap[repoName.toLowerCase()] = {
+              show: toggle ? toggle.checked : true,
+              homepage: domainInput ? domainInput.value.trim() : ''
+            };
           }
         });
 
-        localStorage.setItem(HIDDEN_RECENT_KEY, JSON.stringify(hiddenRepos));
+        localStorage.setItem(RECENT_CUSTOM_KEY, JSON.stringify(recentCustomMap));
         triggerSaveNotice();
       }
 
@@ -939,7 +958,7 @@
         }
       }
 
-      // Render Admin Project Grid
+      // Render Admin Featured Project Grid
       function renderAdminProjects() {
         const grid = document.getElementById('adminProjectGrid');
         if (!grid) return;
@@ -948,13 +967,19 @@
         const projectsList = saved ? JSON.parse(saved) : DEFAULT_PROJECTS;
 
         grid.innerHTML = projectsList.map(proj => `
-          <div class="pm-card" data-title="${proj.name}" data-live-url="${proj.homepage || ''}">
+          <div class="pm-card" data-title="${proj.name}">
             <div class="pm-header">
               <span class="pm-badge">${(proj.badge || 'FEATURED REPO').toUpperCase()}</span>
             </div>
             <h3 class="pm-title">${proj.name}</h3>
             <p class="pm-pitch">${proj.pitch || 'Curated production repository.'}</p>
+
             <div class="pm-controls">
+              <div class="domain-url-group">
+                <label class="domain-url-label">🌐 LIVE WEBSITE / DOMAIN URL (VERCEL, GITHUB.IO, CUSTOM)</label>
+                <input type="url" class="domain-url-input auth-input" placeholder="https://my-app.vercel.app or custom domain" value="${proj.homepage || ''}" style="padding: 8px 12px; font-size: 12px;" />
+              </div>
+
               <div class="toggle-row">
                 <span>VISIT WEBSITE CTA</span>
                 <label class="toggle-switch">
@@ -972,6 +997,11 @@
       }
 
       function bindCardEvents() {
+        // Domain URL Input Live Auto-Save
+        document.querySelectorAll('.domain-url-input').forEach(input => {
+          input.oninput = () => saveProjectsState();
+        });
+
         // Toggle Listener
         document.querySelectorAll('.visit-toggle').forEach(t => {
           t.onchange = () => saveProjectsState();
@@ -1103,13 +1133,16 @@
                 githubReposCache.map(r => `<option value="${r.name}">${r.name} (${r.language || 'Code'} • Updated ${new Date(r.updated_at).toLocaleDateString('en-US', {month:'short', day:'numeric'})})</option>`).join('');
             }
 
-            // B. Populate Recent Activity Feed Hider Controller
-            const hiddenSaved = localStorage.getItem(HIDDEN_RECENT_KEY);
-            const hiddenSet = new Set(hiddenSaved ? JSON.parse(hiddenSaved) : []);
+            // B. Populate Recent Activity Feed & Domain Controller
+            const recentCustomSaved = localStorage.getItem(RECENT_CUSTOM_KEY);
+            const recentCustomMap = recentCustomSaved ? JSON.parse(recentCustomSaved) : {};
 
             if (recentGrid && githubReposCache.length > 0) {
               recentGrid.innerHTML = githubReposCache.map(repo => {
-                const isVisible = !hiddenSet.has(repo.name.toLowerCase());
+                const customData = recentCustomMap[repo.name.toLowerCase()] || {};
+                const isVisible = customData.show !== undefined ? customData.show : true;
+                const domainUrl = customData.homepage !== undefined ? customData.homepage : (repo.homepage || '');
+
                 return `
                   <div class="pm-card" data-repo-name="${repo.name}">
                     <div class="pm-header">
@@ -1118,7 +1151,13 @@
                     </div>
                     <h3 class="pm-title" style="font-size: 16px;">${repo.name}</h3>
                     <p class="pm-pitch" style="font-size: 12px;">${repo.description || 'Public GitHub repository by @neloy559.'}</p>
+                    
                     <div class="pm-controls">
+                      <div class="domain-url-group">
+                        <label class="domain-url-label">🌐 LIVE DOMAIN URL (VERCEL / CUSTOM)</label>
+                        <input type="url" class="recent-domain-input auth-input" placeholder="https://my-app.vercel.app" value="${domainUrl}" style="padding: 6px 10px; font-size: 11px;" />
+                      </div>
+
                       <div class="toggle-row">
                         <span>SHOW IN RECENT ACTIVITY</span>
                         <label class="toggle-switch">
@@ -1131,9 +1170,10 @@
                 `;
               }).join('');
 
-              // Bind Recent Activity Hider Toggles
-              recentGrid.querySelectorAll('.recent-toggle').forEach(toggle => {
-                toggle.onchange = () => saveHiddenRecentState();
+              // Bind Recent Activity Input and Toggle Change Listeners
+              recentGrid.querySelectorAll('.recent-toggle, .recent-domain-input').forEach(elem => {
+                elem.oninput = () => saveRecentCustomState();
+                elem.onchange = () => saveRecentCustomState();
               });
             }
           }
@@ -1180,13 +1220,19 @@
         if (repoName) {
           const grid = document.getElementById('adminProjectGrid');
           const cardHtml = `
-            <div class="pm-card" data-title="${repoName}" data-live-url="${liveUrl || ''}">
+            <div class="pm-card" data-title="${repoName}">
               <div class="pm-header">
                 <span class="pm-badge">${badge.toUpperCase()}</span>
               </div>
               <h3 class="pm-title">${repoName}</h3>
               <p class="pm-pitch">Newly imported repository from @neloy559.</p>
+
               <div class="pm-controls">
+                <div class="domain-url-group">
+                  <label class="domain-url-label">🌐 LIVE WEBSITE / DOMAIN URL (VERCEL, GITHUB.IO, CUSTOM)</label>
+                  <input type="url" class="domain-url-input auth-input" placeholder="https://my-app.vercel.app or custom domain" value="${liveUrl || ''}" style="padding: 8px 12px; font-size: 12px;" />
+                </div>
+
                 <div class="toggle-row">
                   <span>VISIT WEBSITE CTA</span>
                   <label class="toggle-switch">

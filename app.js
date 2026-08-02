@@ -238,18 +238,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
       }
 
-      // B. Populate RECENT ACTIVITY (#liveActivityGrid) with Admin OS Feed Hider Filter
-      const hiddenSaved = localStorage.getItem('fs_neloy_hidden_recent_repos');
-      const hiddenSet = new Set(hiddenSaved ? JSON.parse(hiddenSaved) : []);
+      // B. Populate RECENT ACTIVITY (#liveActivityGrid) with Admin OS Custom Domain & Feed Hider Filter
+      const recentCustomSaved = localStorage.getItem('fs_neloy_recent_custom_data');
+      const recentCustomMap = recentCustomSaved ? JSON.parse(recentCustomSaved) : {};
 
-      const visibleRecentRepos = githubRepos.filter(r => !hiddenSet.has(r.name.toLowerCase()));
+      const visibleRecentRepos = githubRepos.filter(r => {
+        const customData = recentCustomMap[r.name.toLowerCase()];
+        return customData ? customData.show : true;
+      });
 
       const recentGrid = document.getElementById('liveActivityGrid');
       if (recentGrid && visibleRecentRepos.length > 0) {
         recentGrid.innerHTML = visibleRecentRepos.slice(0, 6).map(repo => {
-          const hasHomepage = repo.homepage && repo.homepage.startsWith('http');
-          const visitBtnHtml = hasHomepage
-            ? `<a href="${repo.homepage}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">VISIT WEBSITE ↗</a>`
+          const customData = recentCustomMap[repo.name.toLowerCase()] || {};
+          const liveUrl = customData.homepage || repo.homepage;
+          const hasLiveUrl = liveUrl && liveUrl.startsWith('http');
+          
+          const visitBtnHtml = hasLiveUrl
+            ? `<a href="${liveUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">VISIT WEBSITE ↗</a>`
             : '';
 
           return `
