@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 4. Live GitHub API Sync (Fetching profile & recent repos)
+  // 4. Live GitHub API Sync with VISIT WEBSITE CTA
   async function fetchGitHubData() {
     try {
       // Fetch User Info
@@ -112,29 +112,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const repos = await reposRes.json();
         const grid = document.getElementById('liveActivityGrid');
         if (grid && repos.length > 0) {
-          grid.innerHTML = repos.map(repo => `
-            <article class="feature">
-              <div class="feature-head">
-                <div class="feature-badge">
-                  <span class="dot"></span>
-                  ${repo.language ? repo.language.toUpperCase() : 'REPOSITORY'}
+          grid.innerHTML = repos.map(repo => {
+            const liveUrl = repo.homepage || `https://github.com/neloy559/${repo.name}`;
+            return `
+              <article class="feature">
+                <div class="feature-head">
+                  <div class="feature-badge">
+                    <span class="dot"></span>
+                    ${repo.language ? repo.language.toUpperCase() : 'REPOSITORY'}
+                  </div>
+                  <span class="feature-year">UPDATED ${new Date(repo.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                 </div>
-                <span class="feature-year">UPDATED ${new Date(repo.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-              </div>
-              <div class="feature-headline">
-                <h3 class="feature-title">${repo.name}</h3>
-                <p class="feature-pitch">${repo.description || 'Public GitHub repository by FS Neloy.'}</p>
-              </div>
-              <div class="feature-stack">
-                <span>⭐ ${repo.stargazers_count} Stars</span>
-                <span>🍴 ${repo.forks_count} Forks</span>
-                <span>${repo.language || 'Code'}</span>
-              </div>
-              <div class="feature-actions">
-                <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">VIEW REPOSITORY <span class="arrow"></span></a>
-              </div>
-            </article>
-          `).join('');
+                <div class="feature-headline">
+                  <h3 class="feature-title">${repo.name}</h3>
+                  <p class="feature-pitch">${repo.description || 'Public GitHub repository by FS Neloy.'}</p>
+                </div>
+                <div class="feature-stack">
+                  <span>⭐ ${repo.stargazers_count} Stars</span>
+                  <span>🍴 ${repo.forks_count} Forks</span>
+                  <span>${repo.language || 'Code'}</span>
+                </div>
+                <div class="feature-actions">
+                  <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">VIEW REPOSITORY <span class="arrow"></span></a>
+                  <a href="${liveUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">VISIT WEBSITE ↗</a>
+                </div>
+              </article>
+            `;
+          }).join('');
         }
       }
     } catch (err) {
@@ -172,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
         formStatus.textContent = '✓ Message sent successfully! I will reply to you soon.';
         contactForm.reset();
       } else {
-        // Mailto fallback if key not configured
         const mailtoUrl = `mailto:seyasbro@gmail.com?subject=Portfolio Inquiry from ${encodeURIComponent(formData.get('name'))}&body=${encodeURIComponent(formData.get('message'))}%0A%0AFrom: ${encodeURIComponent(formData.get('email'))}`;
         window.location.href = mailtoUrl;
         formStatus.className = 'form-status success';
