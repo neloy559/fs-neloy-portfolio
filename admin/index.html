@@ -3,10 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FS Neloy | Admin Control Suite</title>
-  
-  <!-- Explicit CMS Config Link -->
-  <link href="config.yml" type="text/yaml" rel="cms-config-url" />
+  <title>FS Neloy | Admin Control Suite V2.0</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -494,14 +491,6 @@
       flex-direction: column;
       gap: 20px;
     }
-
-    #cmsView {
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      min-height: 600px;
-      background: var(--surface-raised);
-    }
   </style>
 </head>
 <body>
@@ -561,6 +550,7 @@
         <span class="admin-brand-badge">CONTROL SUITE V2.0</span>
       </div>
       <div class="admin-header-actions">
+        <a href="cms.html" target="_blank" class="btn-header btn-site" style="background: var(--accent); color: #000; font-weight: 700;">📁 OPEN FULL CMS EDITOR ↗</a>
         <a href="https://fs-neloy.vercel.app" target="_blank" class="btn-header btn-site">VIEW LIVE SITE ↗</a>
         <button type="button" id="lockBtn" class="btn-header btn-lock">🔒 LOCK SESSION</button>
       </div>
@@ -593,16 +583,15 @@
 
       <!-- Navigation Tabs -->
       <div class="admin-tabs">
-        <button class="tab-btn active" data-tab="tabProjects">⚡ PROJECT CTA MANAGER</button>
-        <button class="tab-btn" data-tab="tabCms">📁 FULL CMS EDITOR</button>
-        <button class="tab-btn" data-tab="tabProfile">👤 PROFILE &amp; HERO BIO</button>
+        <button class="tab-btn active" data-tab="tabProjects">⚡ PROJECT CTA &amp; REPO CONTROLLER</button>
+        <button class="tab-btn" data-tab="tabProfile">👤 PROFILE &amp; HERO BIO EDITOR</button>
       </div>
 
       <!-- Tab 1: Project Manager -->
       <div class="tab-content active" id="tabProjects">
         <div class="section-title-row">
           <div class="section-title">
-            <span>//</span> CURATED PROJECT CTA CONTROLLER
+            <span>//</span> CURATED PROJECTS &amp; 1-CLICK CONTROLLER
           </div>
           <button type="button" id="openImportBtn" class="btn-import">➕ IMPORT NEW PROJECT</button>
         </div>
@@ -686,15 +675,7 @@
         </div>
       </div>
 
-      <!-- Tab 2: Full Embedded CMS Editor -->
-      <div class="tab-content" id="tabCms">
-        <div class="section-title">
-          <span>//</span> SVELTIA CMS COLLECTIONS EDITOR
-        </div>
-        <div id="cmsView"></div>
-      </div>
-
-      <!-- Tab 3: Profile Settings -->
+      <!-- Tab 2: Profile Settings -->
       <div class="tab-content" id="tabProfile">
         <div class="section-title">
           <span>//</span> IDENTITY &amp; HERO BIO EDITOR
@@ -719,7 +700,6 @@
       const passError = document.getElementById('passError');
       const adminShell = document.getElementById('adminShell');
       const lockBtn = document.getElementById('lockBtn');
-      const cmsView = document.getElementById('cmsView');
 
       const MASTER_PASS = "neloy@portfolio.com";
       const SESSION_KEY = "fs_neloy_admin_authenticated";
@@ -728,12 +708,6 @@
         if (authGate) authGate.style.display = 'none';
         if (adminShell) adminShell.style.display = 'flex';
         sessionStorage.setItem(SESSION_KEY, "true");
-
-        // Load Sveltia CMS into #cmsView
-        const script = document.createElement('script');
-        script.type = 'module';
-        script.src = 'https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js';
-        if (cmsView) cmsView.appendChild(script);
       }
 
       function lockDashboard() {
