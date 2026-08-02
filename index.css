@@ -94,7 +94,7 @@ a {
 }
 
 /* Accessibility Focus-Visible Rules */
-a:focus-visible, button:focus-visible, input:focus-visible {
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
   outline: 2px solid var(--color-surface-muted);
   outline-offset: 4px;
 }
@@ -182,7 +182,7 @@ body.cursor-hover .cursor::before {
   box-shadow: 0 0 14px 4px var(--color-surface-muted);
 }
 
-/* ─────────── NAVIGATION ─────────── */
+/* Navigation */
 .nav {
   position: fixed;
   inset: 0 0 auto 0;
@@ -257,7 +257,7 @@ body.cursor-hover .cursor::before {
   color: var(--color-surface-muted);
 }
 
-/* ─────────── COMMAND MODAL ─────────── */
+/* Command Modal */
 .cmd-modal {
   position: fixed;
   inset: 0;
@@ -351,7 +351,7 @@ body.cursor-hover .cursor::before {
   font-weight: bold;
 }
 
-/* ─────────── HERO SECTION ─────────── */
+/* Hero Section */
 .hero-wrap {
   min-height: 100vh;
   display: flex;
@@ -429,7 +429,7 @@ body.cursor-hover .cursor::before {
   flex-wrap: wrap;
 }
 
-/* BUTTONS */
+/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -488,7 +488,7 @@ body.cursor-hover .cursor::before {
   transform: translate(0.5px, -50%) rotate(45deg);
 }
 
-/* PORTRAIT */
+/* Portrait */
 .hero-portrait-wrap {
   display: flex;
   justify-content: flex-end;
@@ -525,7 +525,7 @@ body.cursor-hover .cursor::before {
   pointer-events: none;
 }
 
-/* ─────────── PROOF METRICS BAR ─────────── */
+/* Proof Metrics */
 .proof {
   width: 100%;
   padding: 32px var(--pad-x);
@@ -572,7 +572,7 @@ body.cursor-hover .cursor::before {
   color: var(--color-text-secondary);
 }
 
-/* ─────────── NOW CARD ─────────── */
+/* Now Card */
 .now-wrap {
   padding: 56px var(--pad-x);
   max-width: var(--maxw);
@@ -631,7 +631,7 @@ body.cursor-hover .cursor::before {
   font-size: 14px;
 }
 
-/* ─────────── SECTIONS & HEADERS ─────────── */
+/* Sections & Headers */
 .section {
   padding: 96px var(--pad-x);
   max-width: var(--maxw);
@@ -678,7 +678,7 @@ body.cursor-hover .cursor::before {
   color: var(--color-surface-muted);
 }
 
-/* ─────────── ABOUT ─────────── */
+/* About */
 .about-wrap {
   display: grid;
   grid-template-columns: 1fr 1.4fr;
@@ -733,7 +733,7 @@ body.cursor-hover .cursor::before {
   color: var(--color-surface-muted);
 }
 
-/* ─────────── FEATURED WORK GRID ─────────── */
+/* Featured Work Grid */
 .best-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -848,7 +848,60 @@ body.cursor-hover .cursor::before {
   margin-top: auto;
 }
 
-/* ─────────── TECH STACK GRID ─────────── */
+/* Contact Form Styling */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+  max-width: 540px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 18px;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-muted);
+  border-radius: 12px;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-primary);
+  font-size: 14px;
+  transition: border-color var(--motion-duration-fast);
+}
+
+.form-input:focus {
+  border-color: var(--color-surface-muted);
+  outline: none;
+}
+
+.form-textarea {
+  resize: vertical;
+}
+
+.form-submit {
+  align-self: flex-start;
+}
+
+.form-status {
+  font-family: var(--font-family-primary);
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.form-status.success {
+  color: var(--color-surface-muted);
+}
+
+.form-status.info {
+  color: var(--color-text-secondary);
+}
+
+/* Tech Stack Grid */
 .stack-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -888,7 +941,7 @@ body.cursor-hover .cursor::before {
   color: var(--color-surface-muted);
 }
 
-/* ─────────── FOOTER ─────────── */
+/* Footer */
 .footer {
   border-top: 1px solid var(--color-border-subtle);
   padding-bottom: 40px;
@@ -896,10 +949,10 @@ body.cursor-hover .cursor::before {
 
 .footer-wrap {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.2fr 0.8fr;
   gap: 60px;
   margin-bottom: 60px;
-  align-items: center;
+  align-items: start;
 }
 
 .footer-left h2 {
@@ -912,15 +965,16 @@ body.cursor-hover .cursor::before {
 
 .footer-left p {
   color: var(--color-text-secondary);
-  max-width: 40ch;
+  max-width: 50ch;
   line-height: 1.6;
 }
 
 .footer-links {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 24px;
+  padding-top: 20px;
 }
 
 .footer-link {
@@ -951,7 +1005,7 @@ body.cursor-hover .cursor::before {
   padding-top: 28px;
 }
 
-/* ─────────── RESPONSIVE BREAKPOINTS ─────────── */
+/* Responsive Breakpoints */
 @media (max-width: 1024px) {
   .best-grid { grid-template-columns: 1fr; }
   .stack-grid { grid-template-columns: 1fr; }

@@ -52,7 +52,7 @@
     <nav class="nav-links" aria-label="Main Navigation">
       <a href="#about">About</a>
       <a href="#work">Featured Work</a>
-      <a href="#projects">All Repos</a>
+      <a href="#articles">Articles &amp; Activity</a>
       <a href="#stack">Tech Stack</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -116,24 +116,24 @@
         </p>
         <div class="hero-actions">
           <a href="#work" class="btn btn-primary">VIEW FEATURED PROJECTS <span class="arrow" aria-hidden="true"></span></a>
-          <a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">GITHUB PROFILE (19+ REPOS)</a>
+          <a href="https://github.com/neloy559" target="_blank" rel="noopener noreferrer" class="btn btn-ghost" id="heroGithubBtn">GITHUB PROFILE (<span id="repoCountText">19</span> REPOS)</a>
         </div>
       </div>
 
       <div class="hero-portrait-wrap">
         <div class="hero-portrait in">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80" alt="Portrait photo of FS Neloy" />
+          <img src="https://github.com/neloy559.png" id="heroAvatarImg" alt="Portrait photo of FS Neloy (@neloy559)" />
           <div class="duotone" aria-hidden="true"></div>
           <div class="overlay-ink" aria-hidden="true"></div>
         </div>
       </div>
     </section>
 
-    <!-- Proof Metrics Bar -->
-    <div class="proof" aria-label="FS Neloy Key Metrics">
+    <!-- Dynamic Live Proof Metrics Bar (Synced via GitHub API) -->
+    <div class="proof" aria-label="FS Neloy Live Key Metrics">
       <div class="proof-row">
-        <div class="proof-num">19<span class="u">+</span></div>
-        <div class="proof-lbl">Public Repositories on GitHub</div>
+        <div class="proof-num" id="statRepos">19<span class="u">+</span></div>
+        <div class="proof-lbl">Public GitHub Repos (Live Sync)</div>
       </div>
       <div class="proof-row">
         <div class="proof-num">NEXT<span class="u">16</span></div>
@@ -165,7 +165,7 @@
         </div>
         <div class="now-clock">
           <span>LOCAL TIME</span>
-          <b id="liveClock">14:42:00 PM</b>
+          <b id="liveClock">14:50:00 PM</b>
         </div>
       </div>
     </div>
@@ -349,6 +349,27 @@
     </div>
   </section>
 
+  <!-- Live Dynamic Activity & Repos Section (Synced via API) -->
+  <section id="articles" class="section">
+    <div class="sh">
+      <h2>RECENT <span class="it">ACTIVITY</span></h2>
+      <div class="sh-side">
+        <span class="eyebrow">LIVE GITHUB FEED</span>
+        <span>Latest updated repositories and code updates from @neloy559.</span>
+      </div>
+    </div>
+
+    <div class="best-grid" id="liveActivityGrid">
+      <div class="feature">
+        <div class="feature-head">
+          <span class="feature-badge"><span class="dot"></span> LIVE SYNC</span>
+        </div>
+        <h3 class="feature-title">Loading Latest Repos...</h3>
+        <p class="feature-pitch">Fetching real-time data from GitHub API...</p>
+      </div>
+    </div>
+  </section>
+
   <!-- Technical Stack Section -->
   <section id="stack" class="section">
     <div class="sh">
@@ -392,13 +413,37 @@
     </div>
   </section>
 
-  <!-- Contact Footer -->
-  <footer id="contact" class="section footer" role="contentinfo">
+  <!-- Interactive Live Working Contact Form & Modal -->
+  <section id="contact" class="section footer" role="contentinfo">
     <div class="footer-wrap">
       <div class="footer-left">
         <span class="eyebrow">LET'S CONNECT</span>
         <h2>BUILD SOMETHING <br /><span class="it">EXTRAORDINARY TOGETHER</span></h2>
-        <p>Open for full stack engineering roles, SaaS client work, and collaborative web projects.</p>
+        <p>Open for full stack engineering roles, SaaS client work, and collaborative web projects. Send me a direct message below!</p>
+        
+        <!-- Live Working Contact Form (Web3Forms Endpoint Integration) -->
+        <form id="contactForm" class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_KEY" />
+          <input type="hidden" name="subject" value="New Portfolio Message for FS Neloy" />
+          <input type="hidden" name="from_name" value="FS Neloy Portfolio Visitor" />
+
+          <div class="form-group">
+            <label for="senderName" class="sr-only">Your Name</label>
+            <input type="text" id="senderName" name="name" class="form-input" placeholder="Your Name *" required />
+          </div>
+          <div class="form-group">
+            <label for="senderEmail" class="sr-only">Your Email Address</label>
+            <input type="email" id="senderEmail" name="email" class="form-input" placeholder="Your Email Address (e.g. name@company.com) *" required />
+          </div>
+          <div class="form-group">
+            <label for="senderMessage" class="sr-only">Your Message</label>
+            <textarea id="senderMessage" name="message" class="form-input form-textarea" rows="4" placeholder="Tell me about your project, idea, or opportunity... *" required></textarea>
+          </div>
+          <button type="submit" id="formSubmitBtn" class="btn btn-primary form-submit">
+            <span>SEND MESSAGE</span> <span class="arrow" aria-hidden="true"></span>
+          </button>
+          <div id="formStatus" class="form-status" aria-live="polite"></div>
+        </form>
       </div>
 
       <div class="footer-links">
@@ -410,7 +455,7 @@
     </div>
     <div class="footer-bottom">
       <span>© 2026 FS NELOY — ALL RIGHTS RESERVED</span>
-      <span>BUILT WITH DESIGN.MD &amp; SKILL.MD SYSTEM SPECIFICATION</span>
+      <span>DYNAMICALLY POWERED BY GITHUB API &amp; FORM ENGINES</span>
     </div>
   </footer>
 
