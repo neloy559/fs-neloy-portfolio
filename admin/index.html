@@ -5,13 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FS Neloy | Admin Control Suite V2.0</title>
 
-  <!-- Prevent Cache & Force Clean Route -->
+  <!-- Prevent Cache & Unregister CMS Service Worker -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
 
   <script>
-    // Instantly strip leftover URL hash fragments (e.g. /#/collections) so Custom Admin Suite renders
+    // Force unregister leftover CMS Service Workers & clear browser caches
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(registrations => {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+    if ('caches' in window) {
+      caches.keys().then(names => {
+        for (let name of names) {
+          caches.delete(name);
+        }
+      });
+    }
+
+    // Instantly strip leftover URL hash fragments (e.g. /#/collections)
     if (window.location.hash && window.location.pathname.endsWith('/admin')) {
       window.history.replaceState(null, '', window.location.pathname);
     }
