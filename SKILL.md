@@ -1,17 +1,18 @@
 ---
 name: design-system-fs-neloy
-description: Creates implementation-ready design-system guidance with tokens, component behavior, and accessibility standards for F.S. Neloy's full-stack & SaaS applications.
+description: Creates implementation-ready design-system guidance with tokens, component behavior, and accessibility standards for FS Neloy's full-stack & SaaS applications.
 ---
 
 <!-- TYPEUI_SH_MANAGED_START -->
 
-# F.S. Neloy
+# FS Neloy
 
 ## Mission
-Deliver implementation-ready design-system guidance for F.S. Neloy that can be applied consistently across marketing sites, B2B SaaS portals, document intelligence platforms, and full-stack web applications.
+Deliver implementation-ready design-system guidance for FS Neloy, Full Stack Web Developer (AI Assisted), that can be applied consistently across marketing sites, B2B SaaS portals, document intelligence platforms, and full-stack web applications.
 
 ## Brand
-- Product/brand: F.S. Neloy
+- Product/brand: FS Neloy
+- Identity: Full Stack Web Developer (AI Assisted)
 - URL: https://neloy559.github.io/portfolio/
 - Audience: developers, clients, and technical teams
 - Product surface: marketing site & SaaS platforms

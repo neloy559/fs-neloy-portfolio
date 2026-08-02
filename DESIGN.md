@@ -1,12 +1,13 @@
-# F.S. Neloy
+# FS Neloy
 
 ## Mission
-Deliver implementation-ready design-system guidance for F.S. Neloy that can be applied consistently across portfolio, SaaS platforms, B2B portals, and web applications.
+Deliver implementation-ready design-system guidance for FS Neloy that can be applied consistently across marketing site, SaaS platforms, B2B portals, and web applications.
 
 ## Brand
-- Product/brand: F.S. Neloy
+- Product/brand: FS Neloy
+- Identity: Full Stack Web Developer (AI Assisted)
 - URL: https://neloy559.github.io/portfolio/
-- Audience: developers, technical teams, and B2B clients
+- Audience: developers, technical teams, and clients
 - Product surface: marketing site & SaaS platforms
 
 ## Style Foundations
