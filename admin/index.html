@@ -3,12 +3,254 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FS Neloy Portfolio Admin Dashboard</title>
+  <title>FS Neloy Portfolio — Admin Security Access</title>
+  
   <!-- Explicit CMS Config Link -->
   <link href="config.yml" type="text/yaml" rel="cms-config-url" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #0c0c0c;
+      --card-bg: #161616;
+      --accent: #c8ff3f;
+      --text: #f1efe9;
+      --text-mute: #8a8884;
+      --border: rgba(255, 255, 255, 0.14);
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Auth Gate Screen */
+    .auth-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 40px 36px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .auth-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .auth-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .auth-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .auth-desc {
+      font-size: 13px;
+      color: var(--text-mute);
+      line-height: 1.5;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .auth-input:focus {
+      border-color: var(--accent);
+    }
+
+    .auth-btn {
+      padding: 14px 24px;
+      background: var(--accent);
+      color: #0a0a0a;
+      border: 0;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .auth-btn:hover {
+      background: #d5ff5e;
+      transform: translateY(-2px);
+    }
+
+    .auth-error {
+      font-size: 12px;
+      color: #ff5f5f;
+      display: none;
+    }
+
+    /* Lock Header Bar */
+    .admin-bar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 10000;
+      padding: 12px 20px;
+      display: none;
+    }
+
+    .lock-btn {
+      padding: 6px 14px;
+      background: rgba(255, 95, 95, 0.15);
+      border: 1px solid rgba(ff, 95, 95, 0.4);
+      border-radius: 999px;
+      color: #ff7b7b;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+    }
+
+    .lock-btn:hover {
+      background: rgba(255, 95, 95, 0.3);
+    }
+  </style>
 </head>
 <body>
-  <!-- Sveltia CMS (Decap CMS compatible with direct GitHub Token & OAuth support) -->
-  <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js" type="module"></script>
+
+  <!-- Password Security Gate -->
+  <div class="auth-gate" id="authGate">
+    <div class="auth-card">
+      <div class="auth-badge">
+        <span class="dot"></span>
+        RESTRICTED ACCESS
+      </div>
+      <h1 class="auth-title">FS Neloy Admin Gate</h1>
+      <p class="auth-desc">Please enter your master security password to unlock portfolio management dashboard.</p>
+      
+      <form id="passForm" class="auth-form" autocomplete="off">
+        <input type="password" id="passInput" class="auth-input" placeholder="Enter Admin Password..." required autofocus />
+        <button type="submit" class="auth-btn">UNLOCK DASHBOARD →</button>
+        <div id="passError" class="auth-error">Incorrect password. Access denied.</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Lock Session Button -->
+  <div class="admin-bar" id="adminBar">
+    <button type="button" id="lockSessionBtn" class="lock-btn">🔒 LOCK ADMIN</button>
+  </div>
+
+  <!-- Sveltia CMS Application -->
+  <script id="cmsScript" type="module"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const authGate = document.getElementById('authGate');
+      const passForm = document.getElementById('passForm');
+      const passInput = document.getElementById('passInput');
+      const passError = document.getElementById('passError');
+      const adminBar = document.getElementById('adminBar');
+      const lockSessionBtn = document.getElementById('lockSessionBtn');
+
+      const MASTER_PASS = "neloy@portfolio.com";
+      const SESSION_KEY = "fs_neloy_admin_authenticated";
+
+      function unlockDashboard() {
+        if (authGate) authGate.style.display = 'none';
+        if (adminBar) adminBar.style.display = 'block';
+        sessionStorage.setItem(SESSION_KEY, "true");
+
+        // Dynamically load Sveltia CMS Script after verification
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = 'https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js';
+        document.body.appendChild(script);
+      }
+
+      function lockDashboard() {
+        sessionStorage.removeItem(SESSION_KEY);
+        window.location.reload();
+      }
+
+      // Check existing session
+      if (sessionStorage.getItem(SESSION_KEY) === "true") {
+        unlockDashboard();
+      }
+
+      passForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = passInput?.value.trim();
+
+        if (val === MASTER_PASS) {
+          if (passError) passError.style.display = 'none';
+          unlockDashboard();
+        } else {
+          if (passError) {
+            passError.style.display = 'block';
+            passError.textContent = '❌ Incorrect password. Access denied.';
+          }
+          if (passInput) {
+            passInput.value = '';
+            passInput.focus();
+          }
+        }
+      });
+
+      lockSessionBtn?.addEventListener('click', lockDashboard);
+    });
+  </script>
 </body>
 </html>
